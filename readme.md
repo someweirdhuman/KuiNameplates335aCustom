@@ -12,4 +12,5 @@
 ## Changes
 - Auras are always on nameplates and always updates
 - Better performance
-- Auras are created using unit added/removed events
+- Nameplates are created using unit added/removed events and auras update using these events
+- Combatlog parsing is no longer so bad as there is new API to simply grab unit token from guid and map it better, no more assumptions
