@@ -4,7 +4,7 @@
 
 ## Install:
 
-1. [Download the package.](https://github.com/someweirdhuman/KuiNameplates335aCustom/archive/refs/heads/main.zip)
+1. [Download the package.](https://github.com/someweirdhuman/KuiNameplates335aCustom/archive/refs/heads/master.zip)
 2. Requires custom fork of [Awesome_Wotlk](https://github.com/someweirdhuman/awesome_wotlk) and game patched with it
 3. Place the folders `Kui_Nameplates`` Kui_Nameplates_Auras` to `Interface\AddOns`.
 4. Enjoy!
