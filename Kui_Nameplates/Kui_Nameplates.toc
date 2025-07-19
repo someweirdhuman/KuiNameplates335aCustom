@@ -1,0 +1,17 @@
+## Interface: 30300
+## Author: Kesava
+## Title: Kui |cff9966ffNameplates|r
+## Version: 262
+## Notes: Prettier nameplates.
+## SavedVariables: KuiNameplatesGDB
+## X-Curse-Packaged-Version: 262
+## X-Curse-Project-Name: KuiNameplates
+## X-Curse-Project-ID: kuinameplates
+## X-Website: https://github.com/bkader/KuiNameplates-WoTLK
+## X-Email: bkader@email.com
+## X-Date: 2022-01-01 @ 01:10 PM |cff808080UTC|r
+
+Embeds.xml
+Locales.xml
+Core.xml
+Modules.xml
