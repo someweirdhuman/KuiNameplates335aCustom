@@ -245,7 +245,6 @@ function mod:CreateCastbar(frame)
 
 	UpdateCastbar(frame)
 
-	print("crated", frame.castbar)
 	return frame.castbar
 end
 ------------------------------------------------------------------------ Hide --
