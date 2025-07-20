@@ -1,7 +1,7 @@
 ## Interface: 30300
 ## Author: Kesava
 ## Title: Kui |cff9966ffNameplates|r Auras
-## Notes: Aura display plugin for Kui Nameplates
+## Notes: Aura display plugin for Kui Nameplates REQUIRES https://github.com/someweirdhuman/awesome_wotlk
 ## Dependencies: Kui_Nameplates
 ## SavedVariables: KuiSpellListCustom
 ## X-Curse-Packaged-Version: 262

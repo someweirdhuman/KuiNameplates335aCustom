@@ -11,6 +11,8 @@ local L = LibStub("AceLocale-3.0"):GetLocale("KuiNameplates")
 
 mod.uiName = L["Cast bars"]
 
+local castbarsByUnit = {}
+
 local format = format
 local function ResetFade(f)
 	if not f or not f.castbar then
@@ -30,97 +32,45 @@ local function SetCVars()
 	SetCVar("showVKeyCastbar", 1)
 end
 ------------------------------------------------------------- Script handlers --
-local function OnDefaultCastbarShow(self)
+local function OnCastbarUpdate(unit, isChannel)
 	if not mod.enabledState then
 		return
 	end
 
-	local f = self:GetParent().kui
-	ResetFade(f)
+	local f = C_NamePlate.GetNamePlateForUnit(unit).kui
 
 	if mod:FrameIsIgnored(f) then
 		return
 	end
 
-	if f.castbar.name and f.castbar.spellName then
-		f.castbar.name:SetText(f.castbar.spellName)
+	local name, _, text, texture, startTime, endTime, _, _, notInterruptible
+	if isChannel then
+        name, _, text, texture, startTime, endTime, _, notInterruptible = UnitChannelInfo(unit)
+    else
+        name, _, text, texture, startTime, endTime, _, _, notInterruptible = UnitCastingInfo(unit)
+    end
+
+	if not name then
+		f.castbar:Hide();
+		return false
 	end
 
-	-- is cast uninterruptible?
-	if f.shield:IsShown() then
-		f.castbar.bar:SetStatusBarColor(unpack(mod.db.profile.display.shieldbarcolour))
-		f.castbar.shield:Show()
-	else
-		f.castbar.bar:SetStatusBarColor(unpack(mod.db.profile.display.barcolour))
-		f.castbar.shield:Hide()
-	end
+    local currentTime = GetTime()
+    local maxCastTime = (endTime - startTime) / 1000
+	local remainingTime = (endTime / 1000) - currentTime
 
-	if f.trivial then
-		-- hide text & icon
-		if f.castbar.icon or f.castbar.curr then
-			f.castbar.curr:Hide()
-		end
-	else
-		if f.castbar.icon then
-			f.castbar.icon.tex:SetTexture(f.spell:GetTexture())
-			f.castbar.icon:Show()
-		end
 
-		if f.castbar.curr then
-			f.castbar.curr:Show()
-		end
-	end
-	-- castbar is shown on first update
-end
-local function OnDefaultCastbarHide(self)
-	local f = self:GetParent().kui
-	if f.castbar:IsShown() then
-		kui.frameFade(
-			f.castbar,
-			{
-				mode = "OUT",
-				timeToFade = .5,
-				startAlpha = 1,
-				endAlpha = 0,
-				finishedFunc = function()
-					ResetFade(f)
-				end
-			}
-		)
-
-		if f.castbar.name then
-			f.castbar.spellName = nil
-			f.castbar.name:SetText("")
-		end
-
-		if f.castbar.icon then
-			f.castbar.icon.tex:SetTexture(nil)
-		end
-	end
-end
-local function OnDefaultCastbarUpdate(self, elapsed)
-	if not mod.enabledState then
-		return
-	end
-
-	local f = self:GetParent().kui
-
-	if mod:FrameIsIgnored(f) then
-		return
-	end
-
-	local min, max = self:GetMinMaxValues()
 
 	if f.castbar.curr then
-		f.castbar.curr:SetText(format("%.1f", self:GetValue()))
+		f.castbar.curr:SetText(format("%.1f", remainingTime))
 	end
 
-	if f.castbar.name and f.castbar.spellName then
-		f.castbar.name:SetText(f.castbar.spellName)
+	if f.castbar.name then
+		f.castbar.name:SetText(name)
 	end
 
-	f.castbar.bar:SetMinMaxValues(min, max)
-	f.castbar.bar:SetValue(self:GetValue())
+	f.castbar.bar:SetMinMaxValues(0, maxCastTime)
+	f.castbar.bar:SetValue(remainingTime)
 
 	if f.shield:IsShown() then
 		f.castbar.bar:SetStatusBarColor(unpack(mod.db.profile.display.shieldbarcolour))
@@ -137,7 +87,7 @@ local function OnDefaultCastbarUpdate(self, elapsed)
 		end
 	else
 		if f.castbar.icon then
-			f.castbar.icon.tex:SetTexture(f.spell:GetTexture())
+			f.castbar.icon.tex:SetTexture(texture)
 			f.castbar.icon:Show()
 		end
 
@@ -148,13 +98,60 @@ local function OnDefaultCastbarUpdate(self, elapsed)
 
 	f.castbar:Show()
 end
-local function OnDefaultCastbarEvent(self, event, unit, spellName, spellRank)
-	if event == "UNIT_SPELLCAST_START" or event == "UNIT_SPELLCAST_CHANNEL_START" then
-		local frame = addon:GetUnitPlate(unit)
-		if frame and frame.castbar then
-			frame.castbar.spellName = spellName
-		end
-	end
+local function OnEvent(self, event, unit, ...)
+
+    if event == "PLAYER_ENTERING_WORLD" then
+        if not _G["WKUI_PlayerEnteredWorld"] then
+            _G["WKUI_PlayerEnteredWorld"] = true
+        end
+
+    elseif event == "NAME_PLATE_UNIT_ADDED" then
+        local namePlate = C_NamePlate.GetNamePlateForUnit(unit)
+        if namePlate then
+			if not namePlate.kui then
+				return false
+			end
+			local CastBar = castbarsByUnit[unit]
+			if not castbarsByUnit[unit] then
+				castbarsByUnit[unit] = mod:CreateCastbar(namePlate.kui)
+			end
+
+			 if UnitCastingInfo(unit) or UnitChannelInfo(unit) then
+				castbarsByUnit[unit]:Show()
+                OnCastbarUpdate(unit, UnitChannelInfo(unit) ~= nil)
+            end 
+        end
+
+    elseif event == "NAME_PLATE_UNIT_REMOVED" then
+        if castbarsByUnit[unit] then
+            castbarsByUnit[unit]:Hide()
+            castbarsByUnit[unit] = nil
+        end
+
+    elseif event == "UNIT_SPELLCAST_START"
+        or event == "UNIT_SPELLCAST_DELAYED"
+        or event == "UNIT_SPELLCAST_CHANNEL_START"
+        or event == "UNIT_SPELLCAST_CHANNEL_UPDATE"
+    then
+        if castbarsByUnit[unit] then
+            local isChannel = (event == "UNIT_SPELLCAST_CHANNEL_START" 
+                            or event == "UNIT_SPELLCAST_CHANNEL_UPDATE")
+
+			castbarsByUnit[unit]:Show()
+			OnCastbarUpdate(unit, isChannel)
+        end
+
+    elseif event == "UNIT_SPELLCAST_INTERRUPTED"
+        or event == "UNIT_SPELLCAST_STOP"
+        or event == "UNIT_SPELLCAST_FAILED"
+    then
+        if castbarsByUnit[unit] then
+            castbarsByUnit[unit]:Hide()
+        end
+
+    elseif event == "UNIT_SPELLCAST_SUCCEEDED" then
+        -- typically we do nothing special; the castbar fades on its own
+    end
 end
 ---------------------------------------------------------------------- create --
 -- update castbar height and icon size
@@ -173,7 +170,7 @@ local function UpdateCastbar(frame)
 end
 function mod:CreateCastbar(frame)
 	if frame.castbar then
-		return
+		return frame.castbar
 	end
 	-- container ---------------------------------------------------------------
 	frame.castbar = CreateFrame("Frame", nil, frame)
@@ -248,17 +245,8 @@ function mod:CreateCastbar(frame)
 
 	UpdateCastbar(frame)
 
-	-- scripts -------------------------------------------------------------
-	frame.oldCastbar:HookScript("OnShow", OnDefaultCastbarShow)
-	frame.oldCastbar:HookScript("OnHide", OnDefaultCastbarHide)
-	frame.oldCastbar:HookScript("OnUpdate", OnDefaultCastbarUpdate)
-	frame.castbar:RegisterEvent("UNIT_SPELLCAST_START")
-	frame.castbar:RegisterEvent("UNIT_SPELLCAST_CHANNEL_START")
-	frame.castbar:SetScript("OnEvent", OnDefaultCastbarEvent)
-
-	if frame.oldCastbar:IsVisible() then
-		OnDefaultCastbarShow(frame.oldCastbar)
-	end
+	print("crated", frame.castbar)
+	return frame.castbar
 end
 ------------------------------------------------------------------------ Hide --
 function mod:HideCastbar(frame)
@@ -419,14 +407,45 @@ function mod:OnInitialize()
 	SetCVars()
 end
 function mod:OnEnable()
-	for _, frame in pairs(addon.frameList) do
-		if not frame.kui or not frame.kui.castbar then
-			self:CreateCastbar(frame.kui)
+	local EventFrame = CreateFrame("Frame")
+	EventFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
+	EventFrame:RegisterEvent("NAME_PLATE_UNIT_ADDED")
+	EventFrame:RegisterEvent("NAME_PLATE_UNIT_REMOVED")
+	EventFrame:RegisterEvent("UNIT_SPELLCAST_START")
+	EventFrame:RegisterEvent("UNIT_SPELLCAST_DELAYED")
+	EventFrame:RegisterEvent("UNIT_SPELLCAST_CHANNEL_START")
+	EventFrame:RegisterEvent("UNIT_SPELLCAST_CHANNEL_UPDATE")
+	EventFrame:RegisterEvent("UNIT_SPELLCAST_INTERRUPTED")
+	EventFrame:RegisterEvent("UNIT_SPELLCAST_STOP")
+	EventFrame:RegisterEvent("UNIT_SPELLCAST_FAILED")
+	EventFrame:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
+
+	EventFrame:SetScript("OnEvent", OnEvent)
+
+	local updateInterval = 0.05
+	local timeSinceLastUpdate = 0
+
+	EventFrame:SetScript("OnUpdate", function(self, elapsed)
+		timeSinceLastUpdate = timeSinceLastUpdate + elapsed
+		if timeSinceLastUpdate >= updateInterval then
+			for unit, CastBar in pairs(castbarsByUnit) do
+				if CastBar:IsShown() then
+					local isChannel = (UnitChannelInfo(unit) ~= nil)
+					OnCastbarUpdate(unit, isChannel)
+				end
+			end
+			timeSinceLastUpdate = 0
 		end
-	end
+	end)
 end
 function mod:OnDisable()
 	for _, frame in pairs(addon.frameList) do
 		self:HideCastbar(frame.kui)
 	end
+
+	if self.EventFrame then
+        self.EventFrame:SetScript("OnEvent", nil)
+        self.EventFrame:SetScript("OnUpdate", nil)
+        self.EventFrame:UnregisterAllEvents()
+    end
 end
