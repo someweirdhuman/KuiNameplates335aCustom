@@ -58,9 +58,14 @@ local function OnCastbarUpdate(unit, isChannel)
 	local currentTime = GetTime()
 	local maxCastTime = (endTime - startTime) / 1000
 	local elapsedTime = currentTime - (startTime / 1000)
+	local remainingTime = (endTime / 1000) - currentTime
 
 	if f.castbar.curr then
-		f.castbar.curr:SetText(format("%.1f", maxCastTime - elapsedTime))
+		if isChannel then
+			f.castbar.curr:SetText(format("%.1f", remainingTime))
+		else
+			f.castbar.curr:SetText(format("%.1f", maxCastTime - elapsedTime))
+		end
 	end
 
 	if f.castbar.name then
@@ -68,7 +73,12 @@ local function OnCastbarUpdate(unit, isChannel)
 	end
 
 	f.castbar.bar:SetMinMaxValues(0, maxCastTime)
-	f.castbar.bar:SetValue(elapsedTime)
+	if isChannel then
+		f.castbar.bar:SetValue(remainingTime)
+	else
+		f.castbar.bar:SetValue(elapsedTime)
+	end
+
 	if notInterruptible then
 		f.castbar.bar:SetStatusBarColor(unpack(mod.db.profile.display.shieldbarcolour))
 		f.castbar.shield:Show()
