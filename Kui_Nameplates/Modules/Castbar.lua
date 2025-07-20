@@ -55,14 +55,12 @@ local function OnCastbarUpdate(unit, isChannel)
 		return false
 	end
 
-    local currentTime = GetTime()
-    local maxCastTime = (endTime - startTime) / 1000
-	local remainingTime = (endTime / 1000) - currentTime
-
-
+	local currentTime = GetTime()
+	local maxCastTime = (endTime - startTime) / 1000
+	local elapsedTime = currentTime - (startTime / 1000)
 
 	if f.castbar.curr then
-		f.castbar.curr:SetText(format("%.1f", remainingTime))
+		f.castbar.curr:SetText(format("%.1f", maxCastTime - elapsedTime))
 	end
 
 	if f.castbar.name then
@@ -70,9 +68,8 @@ local function OnCastbarUpdate(unit, isChannel)
 	end
 
 	f.castbar.bar:SetMinMaxValues(0, maxCastTime)
-	f.castbar.bar:SetValue(remainingTime)
-
-	if f.shield:IsShown() then
+	f.castbar.bar:SetValue(elapsedTime)
+	if notInterruptible then
 		f.castbar.bar:SetStatusBarColor(unpack(mod.db.profile.display.shieldbarcolour))
 		f.castbar.shield:Show()
 	else
@@ -99,7 +96,6 @@ local function OnCastbarUpdate(unit, isChannel)
 	f.castbar:Show()
 end
 local function OnEvent(self, event, unit, ...)
-
     if event == "PLAYER_ENTERING_WORLD" then
         if not _G["WKUI_PlayerEnteredWorld"] then
             _G["WKUI_PlayerEnteredWorld"] = true
