@@ -423,23 +423,50 @@ function mod:OnInitialize()
 	SetCVars()
 end
 function mod:OnEnable()
-	local EventFrame = CreateFrame("Frame")
-	EventFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
-	EventFrame:RegisterEvent("NAME_PLATE_UNIT_ADDED")
-	EventFrame:RegisterEvent("NAME_PLATE_UNIT_REMOVED")
-	EventFrame:RegisterEvent("UNIT_SPELLCAST_START")
-	EventFrame:RegisterEvent("UNIT_SPELLCAST_DELAYED")
-	EventFrame:RegisterEvent("UNIT_SPELLCAST_CHANNEL_START")
-	EventFrame:RegisterEvent("UNIT_SPELLCAST_CHANNEL_UPDATE")
-	EventFrame:RegisterEvent("UNIT_SPELLCAST_INTERRUPTED")
-	EventFrame:RegisterEvent("UNIT_SPELLCAST_STOP")
-	EventFrame:RegisterEvent("UNIT_SPELLCAST_FAILED")
-	EventFrame:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
+    if not self.EventFrame then
+        self.EventFrame = CreateFrame("Frame")
+    end
 
-	EventFrame:SetScript("OnEvent", OnEvent)
+    local _EventFrame = self.EventFrame
+
+	local namePlates = C_NamePlate.GetNamePlates()
+	castbarsByUnit = {}
+	for i, namePlate in ipairs(namePlates) do
+		if namePlate then
+			if not namePlate.kui then
+				return false
+			end
+
+			local unit = "nameplate"..i
+			local CastBar = castbarsByUnit[unit]
+
+			if not castbarsByUnit[unit] then
+				castbarsByUnit[unit] = mod:CreateCastbar(namePlate.kui)
+			end
+
+			if UnitCastingInfo(unit) or UnitChannelInfo(unit) then
+				castbarsByUnit[unit]:Show()
+				OnCastbarUpdate(unit, UnitChannelInfo(unit) ~= nil)
+			end 
+		end
+	end
+
+	_EventFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
+	_EventFrame:RegisterEvent("NAME_PLATE_UNIT_ADDED")
+	_EventFrame:RegisterEvent("NAME_PLATE_UNIT_REMOVED")
+	_EventFrame:RegisterEvent("UNIT_SPELLCAST_START")
+	_EventFrame:RegisterEvent("UNIT_SPELLCAST_DELAYED")
+	_EventFrame:RegisterEvent("UNIT_SPELLCAST_CHANNEL_START")
+	_EventFrame:RegisterEvent("UNIT_SPELLCAST_CHANNEL_UPDATE")
+	_EventFrame:RegisterEvent("UNIT_SPELLCAST_INTERRUPTED")
+	_EventFrame:RegisterEvent("UNIT_SPELLCAST_STOP")
+	_EventFrame:RegisterEvent("UNIT_SPELLCAST_FAILED")
+	_EventFrame:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
+
+	_EventFrame:SetScript("OnEvent", OnEvent)
 
 	local timeSinceLastUpdate = 0
-	EventFrame:SetScript("OnUpdate", function(self, elapsed)
+	_EventFrame:SetScript("OnUpdate", function(self, elapsed)
 		timeSinceLastUpdate = timeSinceLastUpdate + elapsed
 		if timeSinceLastUpdate >= mod.db.profile.display.updateInterval then
 			for unit, CastBar in pairs(castbarsByUnit) do
@@ -461,5 +488,6 @@ function mod:OnDisable()
         self.EventFrame:SetScript("OnEvent", nil)
         self.EventFrame:SetScript("OnUpdate", nil)
         self.EventFrame:UnregisterAllEvents()
+		self.EventFrame = nil
     end
 end
