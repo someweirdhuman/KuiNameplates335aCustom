@@ -363,18 +363,18 @@ function mod:GetOptions()
 					softMax = 20,
 					max = 100
 				},
-				updateInterval = {
-					type = "range",
-					name = L["Update Interval"],
-					desc = L["How often the cast bar updates. Lower values make it smoother, but may affect performance"],
-					order = 30,
-					step = 0.01,
-					min = 0.01,
-					softMax = 0.3,
-					max = 1,
-				},
 			}
-		}
+		},
+		updateInterval = {
+			type = "range",
+			name = L["Update Interval"],
+			desc = L["How often the cast bar updates. Lower values make it smoother, but may affect performance"],
+			order = 30,
+			step = 0.01,
+			min = 0.01,
+			softMax = 0.3,
+			max = 1,
+		},
 	}
 end
 function mod:OnInitialize()
@@ -385,8 +385,8 @@ function mod:OnInitialize()
 			profile = {
 				enabled = true,
 				onfriendly = true,
+				updateInterval = 0.01,
 				display = {
-					updateInterval = 0.01,
 					casttime = false,
 					spellname = true,
 					spellicon = true,
@@ -468,7 +468,7 @@ function mod:OnEnable()
 	local timeSinceLastUpdate = 0
 	_EventFrame:SetScript("OnUpdate", function(self, elapsed)
 		timeSinceLastUpdate = timeSinceLastUpdate + elapsed
-		if timeSinceLastUpdate >= mod.db.profile.display.updateInterval then
+		if timeSinceLastUpdate >= mod.db.profile.updateInterval then
 			for unit, CastBar in pairs(castbarsByUnit) do
 				if CastBar:IsShown() then
 					local isChannel = (UnitChannelInfo(unit) ~= nil)
