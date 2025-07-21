@@ -12,6 +12,7 @@ local L = LibStub("AceLocale-3.0"):GetLocale("KuiNameplates")
 mod.uiName = L["Cast bars"]
 
 local castbarsByUnit = {}
+
 local format = format
 local function ResetFade(f)
 	if not f or not f.castbar then
@@ -44,13 +45,13 @@ local function OnCastbarUpdate(unit, isChannel)
 
 	local name, _, text, texture, startTime, endTime, _, _, notInterruptible
 	if isChannel then
-		name, _, text, texture, startTime, endTime, _, notInterruptible = UnitChannelInfo(unit)
-	else
-		name, _, text, texture, startTime, endTime, _, _, notInterruptible = UnitCastingInfo(unit)
-	end
+        name, _, text, texture, startTime, endTime, _, notInterruptible = UnitChannelInfo(unit)
+    else
+        name, _, text, texture, startTime, endTime, _, _, notInterruptible = UnitCastingInfo(unit)
+    end
 
 	if not name then
-		f.castbar:Hide()
+		f.castbar:Hide();
 		return false
 	end
 
@@ -105,13 +106,14 @@ local function OnCastbarUpdate(unit, isChannel)
 	f.castbar:Show()
 end
 local function OnEvent(self, event, unit, ...)
-	if event == "PLAYER_ENTERING_WORLD" then
-		if not _G["WKUI_PlayerEnteredWorld"] then
-			_G["WKUI_PlayerEnteredWorld"] = true
-		end
-	elseif event == "NAME_PLATE_UNIT_ADDED" then
-		local namePlate = C_NamePlate.GetNamePlateForUnit(unit)
-		if namePlate then
+    if event == "PLAYER_ENTERING_WORLD" then
+        if not _G["WKUI_PlayerEnteredWorld"] then
+            _G["WKUI_PlayerEnteredWorld"] = true
+        end
+
+    elseif event == "NAME_PLATE_UNIT_ADDED" then
+        local namePlate = C_NamePlate.GetNamePlateForUnit(unit)
+        if namePlate then
 			if not namePlate.kui then
 				return false
 			end
@@ -120,39 +122,42 @@ local function OnEvent(self, event, unit, ...)
 				castbarsByUnit[unit] = mod:CreateCastbar(namePlate.kui)
 			end
 
-			if UnitCastingInfo(unit) or UnitChannelInfo(unit) then
+			 if UnitCastingInfo(unit) or UnitChannelInfo(unit) then
 				castbarsByUnit[unit]:Show()
-				OnCastbarUpdate(unit, UnitChannelInfo(unit) ~= nil)
-			end
-		end
-	elseif event == "NAME_PLATE_UNIT_REMOVED" then
-		if castbarsByUnit[unit] then
-			castbarsByUnit[unit]:Hide()
-			castbarsByUnit[unit] = nil
-		end
-	elseif
-		event == "UNIT_SPELLCAST_START"
-		or event == "UNIT_SPELLCAST_DELAYED"
-		or event == "UNIT_SPELLCAST_CHANNEL_START"
-		or event == "UNIT_SPELLCAST_CHANNEL_UPDATE"
-	then
-		if castbarsByUnit[unit] then
-			local isChannel = (event == "UNIT_SPELLCAST_CHANNEL_START" or event == "UNIT_SPELLCAST_CHANNEL_UPDATE")
+                OnCastbarUpdate(unit, UnitChannelInfo(unit) ~= nil)
+            end 
+        end
+
+    elseif event == "NAME_PLATE_UNIT_REMOVED" then
+        if castbarsByUnit[unit] then
+            castbarsByUnit[unit]:Hide()
+            castbarsByUnit[unit] = nil
+        end
+
+    elseif event == "UNIT_SPELLCAST_START"
+        or event == "UNIT_SPELLCAST_DELAYED"
+        or event == "UNIT_SPELLCAST_CHANNEL_START"
+        or event == "UNIT_SPELLCAST_CHANNEL_UPDATE"
+    then
+        if castbarsByUnit[unit] then
+            local isChannel = (event == "UNIT_SPELLCAST_CHANNEL_START" 
+                            or event == "UNIT_SPELLCAST_CHANNEL_UPDATE")
 
 			castbarsByUnit[unit]:Show()
 			OnCastbarUpdate(unit, isChannel)
-		end
-	elseif
-		event == "UNIT_SPELLCAST_INTERRUPTED"
-		or event == "UNIT_SPELLCAST_STOP"
-		or event == "UNIT_SPELLCAST_FAILED"
-	then
-		if castbarsByUnit[unit] then
-			castbarsByUnit[unit]:Hide()
-		end
-	elseif event == "UNIT_SPELLCAST_SUCCEEDED" then
-		-- typically we do nothing special; the castbar fades on its own
-	end
+        end
+
+    elseif event == "UNIT_SPELLCAST_INTERRUPTED"
+        or event == "UNIT_SPELLCAST_STOP"
+        or event == "UNIT_SPELLCAST_FAILED"
+    then
+        if castbarsByUnit[unit] then
+            castbarsByUnit[unit]:Hide()
+        end
+
+    elseif event == "UNIT_SPELLCAST_SUCCEEDED" then
+        -- typically we do nothing special; the castbar fades on its own
+    end
 end
 ---------------------------------------------------------------------- create --
 -- update castbar height and icon size
@@ -212,7 +217,7 @@ function mod:CreateCastbar(frame)
 	frame.castbar.shield:SetTexCoord(0, 0.84375, 0, 1)
 	frame.castbar.shield:SetVertexColor(0.5, 0.5, 0.7)
 
-	frame.castbar.shield:SetSize(sizes.shield * 0.84375, sizes.shield)
+	frame.castbar.shield:SetSize(sizes.shield * .84375, sizes.shield)
 	frame.castbar.shield:SetPoint("LEFT", frame.castbar.bg, -7, 0)
 
 	frame.castbar.shield:SetBlendMode("BLEND")
@@ -222,12 +227,12 @@ function mod:CreateCastbar(frame)
 
 	-- cast bar text -------------------------------------------------------
 	if self.db.profile.display.spellname then
-		frame.castbar.name = frame:CreateFontString(frame.castbar.bar, { size = "small" })
+		frame.castbar.name = frame:CreateFontString(frame.castbar.bar, {size = "small"})
 		frame.castbar.name:SetPoint("TOP", frame.castbar.bar, "BOTTOM", 0, -3)
 	end
 
 	if self.db.profile.display.casttime then
-		frame.castbar.curr = frame:CreateFontString(frame.castbar.bar, { size = "small" })
+		frame.castbar.curr = frame:CreateFontString(frame.castbar.bar, {size = "small"})
 		frame.castbar.curr:SetPoint("LEFT", frame.castbar.bg, "RIGHT", 2, 0)
 	end
 
@@ -270,20 +275,28 @@ function mod:UnignoreFrame(frame)
 	end
 end
 ---------------------------------------------------- Post db change functions --
-mod:AddConfigChanged("enabled", function(v)
-	mod:Toggle(v)
-end)
-mod:AddConfigChanged({ "display", "shieldbarcolour" }, nil, function(f, v)
-	f.castbar.shield:SetVertexColor(unpack(v))
-end)
-mod:AddConfigChanged({ "display", "cbheight" }, function()
-	sizes.cbheight = mod.db.profile.display.cbheight
-	sizes.icon = addon.db.profile.general.hheight + sizes.cbheight + 1
-end, UpdateCastbar)
-mod:AddConfigChanged({ "updateinterval" }, function(v)
-	mod.updateInterval = v
-end)
-mod:AddGlobalConfigChanged("addon", { "general", "hheight" }, mod.configChangedFuncs.display.cbheight.ro, UpdateCastbar)
+mod:AddConfigChanged(
+	"enabled",
+	function(v)
+		mod:Toggle(v)
+	end
+)
+mod:AddConfigChanged(
+	{"display", "shieldbarcolour"},
+	nil,
+	function(f, v)
+		f.castbar.shield:SetVertexColor(unpack(v))
+	end
+)
+mod:AddConfigChanged(
+	{"display", "cbheight"},
+	function()
+		sizes.cbheight = mod.db.profile.display.cbheight
+		sizes.icon = addon.db.profile.general.hheight + sizes.cbheight + 1
+	end,
+	UpdateCastbar
+)
+mod:AddGlobalConfigChanged("addon", {"general", "hheight"}, mod.configChangedFuncs.display.cbheight.ro, UpdateCastbar)
 -------------------------------------------------------------------- Register --
 function mod:GetOptions()
 	return {
@@ -292,7 +305,7 @@ function mod:GetOptions()
 			name = L["Enable cast bar"],
 			desc = L["Show cast bars (at all)"],
 			order = 0,
-			disabled = false,
+			disabled = false
 		},
 		onfriendly = {
 			type = "toggle",
@@ -301,7 +314,7 @@ function mod:GetOptions()
 			order = 10,
 			disabled = function()
 				return not self.db.profile.enabled
-			end,
+			end
 		},
 		display = {
 			type = "group",
@@ -316,29 +329,29 @@ function mod:GetOptions()
 					type = "toggle",
 					name = L["Show cast time"],
 					desc = L["Show cast time and time remaining"],
-					order = 20,
+					order = 20
 				},
 				spellname = {
 					type = "toggle",
 					name = L["Show spell name"],
-					order = 15,
+					order = 15
 				},
 				spellicon = {
 					type = "toggle",
 					name = L["Show spell icon"],
-					order = 10,
+					order = 10
 				},
 				barcolour = {
 					type = "color",
 					name = L["Bar colour"],
 					desc = L["The colour of the cast bar during interruptible casts"],
-					order = 0,
+					order = 0
 				},
 				shieldbarcolour = {
 					type = "color",
 					name = L["Uninterruptible colour"],
 					desc = L["The colour of the cast bar and shield during UNinterruptible casts."],
-					order = 5,
+					order = 5
 				},
 				cbheight = {
 					type = "range",
@@ -348,54 +361,64 @@ function mod:GetOptions()
 					step = 1,
 					min = 3,
 					softMax = 20,
-					max = 100,
+					max = 100
 				},
-			},
-		},
-		updateinterval = {
-			type = "range",
-			name = L["Update Interval"],
-			desc = L["How often the cast bar updates. Lower values make it smoother, but may affect performance"],
-			order = 30,
-			step = 0.01,
-			min = 0.01,
-			softMax = 0.05,
-			max = 1,
-		},
+				updateInterval = {
+					type = "range",
+					name = L["Update Interval"],
+					desc = L["How often the cast bar updates. Lower values make it smoother, but may affect performance"],
+					order = 30,
+					step = 0.01,
+					min = 0.01,
+					softMax = 0.3,
+					max = 1,
+				},
+			}
+		}
 	}
 end
 function mod:OnInitialize()
-	self.db = addon.db:RegisterNamespace(self.moduleName, {
-		profile = {
-			enabled = true,
-			onfriendly = true,
-			updateinterval = 0.01,
-			display = {
-				casttime = false,
-				spellname = true,
-				spellicon = true,
-				cbheight = 5,
-				barcolour = { 0.43, 0.47, 0.55, 1 },
-				shieldbarcolour = { 0.8, 0.1, 0.1, 1 },
-			},
-		},
-	})
+	self.db =
+		addon.db:RegisterNamespace(
+		self.moduleName,
+		{
+			profile = {
+				enabled = true,
+				onfriendly = true,
+				display = {
+					updateInterval = 0.01,
+					casttime = false,
+					spellname = true,
+					spellicon = true,
+					cbheight = 5,
+					barcolour = {.43, 0.47, 0.55, 1},
+					shieldbarcolour = {.8, 0.1, 0.1, 1}
+				}
+			}
+		}
+	)
 
 	addon:InitModuleOptions(self)
 	self:SetEnabledState(self.db.profile.enabled)
 
-	sizes = { cbheight = self.db.profile.display.cbheight, shield = 16 }
-    mod.updateInterval = self.db.profile.updateinterval
+	sizes = {cbheight = self.db.profile.display.cbheight, shield = 16}
+
 	self.configChangedFuncs.display.cbheight.ro(sizes.cbheight)
 
 	-- handle default interface cvars & checkboxes
-	InterfaceOptionsCombatPanel:HookScript("OnShow", function()
-		InterfaceOptionsCombatPanelEnemyCastBarsOnNameplates:SetChecked(true)
-		InterfaceOptionsCombatPanelEnemyCastBarsOnNameplates:Disable()
-	end)
-	InterfaceOptionsFrame:HookScript("OnHide", function()
-		SetCVars()
-	end)
+	InterfaceOptionsCombatPanel:HookScript(
+		"OnShow",
+		function()
+			InterfaceOptionsCombatPanelEnemyCastBarsOnNameplates:SetChecked(true)
+			InterfaceOptionsCombatPanelEnemyCastBarsOnNameplates:Disable()
+		end
+	)
+	InterfaceOptionsFrame:HookScript(
+		"OnHide",
+		function()
+			SetCVars()
+		end
+	)
 
 	SetCVars()
 end
@@ -416,10 +439,9 @@ function mod:OnEnable()
 	EventFrame:SetScript("OnEvent", OnEvent)
 
 	local timeSinceLastUpdate = 0
-
 	EventFrame:SetScript("OnUpdate", function(self, elapsed)
 		timeSinceLastUpdate = timeSinceLastUpdate + elapsed
-		if timeSinceLastUpdate >= mod.updateInterval then
+		if timeSinceLastUpdate >= mod.db.profile.display.updateInterval then
 			for unit, CastBar in pairs(castbarsByUnit) do
 				if CastBar:IsShown() then
 					local isChannel = (UnitChannelInfo(unit) ~= nil)
@@ -436,8 +458,8 @@ function mod:OnDisable()
 	end
 
 	if self.EventFrame then
-		self.EventFrame:SetScript("OnEvent", nil)
-		self.EventFrame:SetScript("OnUpdate", nil)
-		self.EventFrame:UnregisterAllEvents()
-	end
+        self.EventFrame:SetScript("OnEvent", nil)
+        self.EventFrame:SetScript("OnUpdate", nil)
+        self.EventFrame:UnregisterAllEvents()
+    end
 end
