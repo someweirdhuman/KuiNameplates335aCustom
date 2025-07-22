@@ -1,8 +1,10 @@
 local L = LibStub("AceLocale-3.0"):NewLocale("KuiNameplatesAuras", "enUS", true)
 if not L then return end
 
-L["Show my auras"] = true
-L["Display auras cast by you on the current target's nameplate"] = true
+L["Show auras"] = true
+L["Display only auras cast by you on the current target's nameplate, can get broken if target disappears etc as that aura wont belong to you as tracking will be stopped"] = true
+L["Show only my auras"] = true
+L["Display auras on the current target's nameplate"] = true
 L["Show on trivial units"] = true
 L["Show auras on trivial (half-size, lower maximum health) nameplates."] = true
 L["Behaviour"] = true

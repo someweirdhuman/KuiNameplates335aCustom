@@ -525,17 +525,18 @@ function mod:UNIT_AURA(event, unit, frame)
 		return
 	end
 
-	frame.auras:ArrangeButtons()
-
 	if frame.trivial and not self.db.profile.showtrivial then
 		return
 	end
 
-	local filter = "PLAYER"
+	local filter = ""
+	if onlyMyAuras then
+		filter = "PLAYER|"
+	end
 	if UnitIsFriend(unit, "player") then
-		filter = filter .. "|HELPFUL"
+		filter = filter .. "HELPFUL"
 	else
-		filter = filter .. "|HARMFUL"
+		filter = filter .. "HARMFUL"
 	end
 
 
@@ -556,6 +557,7 @@ function mod:UNIT_AURA(event, unit, frame)
 
 		button.used = nil
 	end
+	frame.auras:ArrangeButtons()
 end
 function mod:PLAYER_ENTERING_WORLD(event)
 	PLAYER_GUID = PLAYER_GUID or UnitGUID("player")
@@ -591,10 +593,19 @@ function mod:GetOptions()
 	return {
 		enabled = {
 			type = "toggle",
-			name = L["Show my auras"],
-			desc = L["Display auras cast by you on the current target's nameplate"],
+			name = L["Show auras"],
+			desc = L["Display auras on the current target's nameplate"],
 			order = 1,
 			disabled = false
+		},
+		onlyMyAuras = {
+			type = "toggle",
+			name = L["Show only my auras"],
+			desc = L["Display only auras cast by you on the current target's nameplate, can get broken if target disappears etc as that aura wont belong to you as tracking will be stopped"],
+			order = 2,
+			disabled = function()
+				return not self.db.profile.enabled
+			end
 		},
 		showtrivial = {
 			type = "toggle",
