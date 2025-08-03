@@ -136,7 +136,7 @@ end
 ---------------------------------------------------------------------- Create --
 function mod:CreateCastWarnings(msg, frame)
 	-- casting spell name
-	frame.castWarning = frame:CreateFontString(frame.overlay, {size = "spellName", outline = "OUTLINE"})
+	frame.castWarning = frame:CreateFontString(frame.overlay, {size = "spellname", outline = "OUTLINE"})
 	frame.castWarning:Hide()
 	frame.castWarning:SetPoint("BOTTOM", frame.name, "TOP", 0, 1)
 
