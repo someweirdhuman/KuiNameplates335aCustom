@@ -302,6 +302,16 @@ local function UpdateButtonDuration(button, duration)
 		button:SetScript("OnUpdate", OnAuraUpdate)
 	end
 
+    if button.cooldown then
+        if button.duration and button.duration > 0 and button.expirationTime then
+            local start = button.expirationTime - button.duration
+            button.cooldown:SetCooldown(start, button.duration)
+            button.cooldown:Show()
+        else
+            button.cooldown:Hide()
+        end
+    end
+
 	if db_display.sort then
 		-- sort by expiration time
 		table.sort(button:GetParent().buttons, function(a, b)
@@ -337,6 +347,13 @@ local function GetAuraButton(self, spellid, icon, count, duration, expirationTim
 		button:Hide()
 
 		button.icon = button:CreateTexture(nil, "ARTWORK")
+
+        -- Add built-in cooldown frame
+        button.cooldown = CreateFrame("Cooldown", nil, button, "CooldownFrameTemplate")
+        button.cooldown:SetAllPoints(button.icon)
+        button.cooldown:SetReverse(true)
+        button.cooldown:Hide()
+		button.cooldown.noCooldownCount = true
 
 		button.time = self.frame:CreateFontString(button)
 		button.time:SetJustifyH("LEFT")
