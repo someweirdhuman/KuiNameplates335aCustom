@@ -405,9 +405,9 @@ do
 						desc = L["Make your target's nameplate glow"],
 						order = 80
 					},
-					targetglowcolour = {
+					targetglowcolor = {
 						type = "color",
-						name = L["Target glow colour"],
+						name = L["Target glow color"],
 						order = 90,
 						hasAlpha = true,
 						disabled = function()
@@ -417,7 +417,7 @@ do
 					targetarrows = {
 						type = "toggle",
 						name = L["Show target arrows"],
-						desc = L["Show arrows around your target's nameplate. They will inherit the colour of the target glow, set above."],
+						desc = L["Show arrows around your target's nameplate. They will inherit the color of the target glow, set above."],
 						order = 100,
 						width = "double"
 					},
@@ -678,9 +678,9 @@ do
 				type = "group",
 				order = 40,
 				args = {
-					reactioncolours = {
+					reactioncolors = {
 						type = "group",
-						name = L["Reaction colours"],
+						name = L["Reaction colors"],
 						inline = true,
 						order = 1,
 						args = {

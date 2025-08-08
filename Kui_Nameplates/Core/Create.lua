@@ -250,7 +250,7 @@ function addon:CreateTargetGlow(f)
 	f.targetGlow:SetTexture("Interface\\AddOns\\Kui_Nameplates\\Media\\target-glow")
 	f.targetGlow:SetTexCoord(0, .593, 0, .875)
 	f.targetGlow:SetPoint("TOP", f.overlay, "BOTTOM", 0, 1)
-	f.targetGlow:SetVertexColor(unpack(self.db.profile.general.targetglowcolour))
+	f.targetGlow:SetVertexColor(unpack(self.db.profile.general.targetglowcolor))
 	f.targetGlow:Hide()
 end
 function addon:UpdateTargetGlow(f, trivial)

@@ -46,59 +46,59 @@ local function SetFrameCentre(f)
 		f.y = floor((h / 2) - (addon.sizes.frame.height / 2))
 	end
 end
--- get default health bar colour, parse it into one of our custom colours
+-- get default health bar color, parse it into one of our custom colors
 -- and the reaction of the unit toward the player
-local function SetHealthColour(self, sticky, r, g, b)
+local function SetHealthColor(self, sticky, r, g, b)
 	if sticky == false then
 		-- unstick and reset
 		self.health.reset = true
-		self.healthColourPriority = nil
+		self.healthColorPriority = nil
 		sticky = nil
 	elseif sticky == true then
 		-- convert legacy stickiness
 		sticky = 1
 	end
-	-- nil sticky = just update health colour
+	-- nil sticky = just update health color
 
 	if sticky then
-		if not self.healthColourPriority or sticky >= self.healthColourPriority then
+		if not self.healthColorPriority or sticky >= self.healthColorPriority then
 			self.health:SetStatusBarColor(r, g, b)
-			self.healthColourPriority = sticky
+			self.healthColorPriority = sticky
 		end
 		return
 	end
 
-	-- update health colour from default (r,g,b arguments are ignored)
+	-- update health color from default (r,g,b arguments are ignored)
 	r, g, b = self.oldHealth:GetStatusBarColor()
 	if self.health.reset or r ~= self.health.r or g ~= self.health.g or b ~= self.health.b then
-		-- store the default colour
+		-- store the default color
 		self.health.r, self.health.g, self.health.b = r, g, b
 		self.health.reset, self.player, self.tapped = nil, nil, nil
 
 		if g > 0.9 and r == 0 and b == 0 then
 			-- friendly NPC
 			self.friend = true
-			r, g, b = unpack(profile_hp.reactioncolours.friendlycol)
+			r, g, b = unpack(profile_hp.reactioncolors.friendlycol)
 		elseif b > 0.9 and r == 0 and g == 0 then
 			-- friendly player
 			self.friend = true
 			self.player = true
-			r, g, b = unpack(profile_hp.reactioncolours.playercol)
+			r, g, b = unpack(profile_hp.reactioncolors.playercol)
 		elseif r > 0.9 and g == 0 and b == 0 then
 			-- enemy NPC
 			self.friend = nil
-			r, g, b = unpack(profile_hp.reactioncolours.hatedcol)
+			r, g, b = unpack(profile_hp.reactioncolors.hatedcol)
 		elseif (r + g) > 1.8 and b == 0 then
 			-- neutral NPC
 			self.friend = nil
-			r, g, b = unpack(profile_hp.reactioncolours.neutralcol)
+			r, g, b = unpack(profile_hp.reactioncolors.neutralcol)
 		elseif r < 0.6 and (r + g) == (r + b) then
 			-- tapped NPC
 			-- keep previous self.friend value
 			self.tapped = true
-			r, g, b = unpack(profile_hp.reactioncolours.tappedcol)
+			r, g, b = unpack(profile_hp.reactioncolors.tappedcol)
 		else
-			-- enemy player, use default UI colour
+			-- enemy player, use default UI color
 			self.friend = nil
 			self.player = true
 		end
@@ -107,7 +107,7 @@ local function SetHealthColour(self, sticky, r, g, b)
 	end
 end
 
-local function SetGlowColour(self, r, g, b, a)
+local function SetGlowColor(self, r, g, b, a)
 	if not r then
 		-- set default colour
 		r, g, b = 0, 0, 0
@@ -286,8 +286,8 @@ local function OnFrameShow(self)
 	f.elapsed = 0
 	f.critElap = 0
 
-	-- reset glow colour
-	f:SetGlowColour()
+	-- reset glow color
+	f:SetGlowColor()
 
 	-- dispatch the PostShow message after the first UpdateFrame
 	f.DispatchPostShow = true
@@ -315,7 +315,7 @@ local function OnFrameHide(self)
 	f.hasThreat = nil
 	f.target = nil
 	f.targetDelay = nil
-	f.healthColourPriority = nil
+	f.healthColorPriority = nil
 
 	-- force un-highlight
 	OnFrameLeave(f)
@@ -332,7 +332,7 @@ local function OnFrameHide(self)
 	-- shown when the frame is hidden
 	f.glow:Hide()
 
-	-- unset stored health bar colours
+	-- unset stored health bar colors
 	f.health.r, f.health.g, f.health.b, f.health.reset = nil, nil, nil, nil
 	f.friend = nil
 
@@ -407,8 +407,8 @@ local function UpdateFrame(self)
 	-- it to be erased when another might still exist
 	addon:StoreName(self)
 
-	-- reset/update health bar colour
-	self:SetHealthColour()
+	-- reset/update health bar color
+	self:SetHealthColor()
 
 	if select(2, self.oldName:GetTextColor()) == 0 then
 		self.active = true
@@ -417,7 +417,7 @@ local function UpdateFrame(self)
 	end
 
 	if self.DispatchPostShow then
-		-- force initial health update, which relies on health colour
+		-- force initial health update, which relies on health color
 		self:OnHealthValueChanged()
 
 		addon:SendMessage("KuiNameplates_PostShow", self)
@@ -432,7 +432,7 @@ end
 local function UpdateFrameCritical(self)
 	------------------------------------------------------------------ Threat --
 	if self.glow:IsVisible() then
-		-- check the default glow colour every frame while it is visible
+		-- check the default glow color every frame while it is visible
 		self.glow.wasVisible = true
 		self.glow.r, self.glow.g, self.glow.b = self.glow:GetVertexColor()
 
@@ -444,8 +444,7 @@ local function UpdateFrameCritical(self)
 		self.glow.wasVisible = nil
 
 		if not self.targetGlow or not self.target then
-			-- restore default glow colour
-			self:SetGlowColour()
+			self:SetGlowColor()
 		end
 
 		if self.hasThreat then
@@ -487,7 +486,7 @@ local function UpdateFrameCritical(self)
 
 				if self.targetGlow then
 					self.targetGlow:Show()
-					self:SetGlowColour(unpack(profile.general.targetglowcolour))
+					self:SetGlowColor(unpack(profile.general.targetglowcolor))
 				end
 
 				if self.highlight and profile.general.highlight_target then
@@ -511,7 +510,7 @@ local function UpdateFrameCritical(self)
 
 			if self.targetGlow then
 				self.targetGlow:Hide()
-				self:SetGlowColour()
+				self:SetGlowColor()
 			end
 
 			if self.highlight and profile.general.highlight_target then
@@ -605,8 +604,8 @@ function addon:InitFrame(frame)
 	f.UpdateFrame = UpdateFrame
 	f.UpdateFrameCritical = UpdateFrameCritical
 	f.SetName = SetName
-	f.SetHealthColour = SetHealthColour
-	f.SetGlowColour = SetGlowColour
+	f.SetHealthColor = SetHealthColor
+	f.SetGlowColor = SetGlowColor
 	f.SetCentre = SetFrameCentre
 	f.OnHealthValueChanged = OnHealthValueChanged
 	f.IsTrivial = IsTrivial

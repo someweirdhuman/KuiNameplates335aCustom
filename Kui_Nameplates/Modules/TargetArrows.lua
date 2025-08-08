@@ -25,8 +25,8 @@ function mod:PostCreate(msg, f)
 	ta.right:SetTexCoord(1, 0, 0, 1)
 	ta.right:SetSize(arrowSize, arrowSize)
 
-	ta.left:SetVertexColor(unpack(addon.db.profile.general.targetglowcolour))
-	ta.right:SetVertexColor(unpack(addon.db.profile.general.targetglowcolour))
+	ta.left:SetVertexColor(unpack(addon.db.profile.general.targetglowcolor))
+	ta.right:SetVertexColor(unpack(addon.db.profile.general.targetglowcolor))
 
 	ta:Hide()
 	f.targetArrows = ta
