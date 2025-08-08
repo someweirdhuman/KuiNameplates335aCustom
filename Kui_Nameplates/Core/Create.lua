@@ -127,7 +127,24 @@ function addon:CreateHighlight(frame, f)
 	f.highlight:SetAlpha(.4)
 	f.highlight:Hide()
 end
------------------------------------------------------------------ Health text --
+
+------------------------------------------------------------------------ Text --
+local function SetJustify(fi, anch)
+	if anch:find("BOTTOM") then
+		fi:SetJustifyV("BOTTOM")
+	elseif anch:find("TOP") then
+		fi:SetJustifyV("TOP")
+	else
+		fi:SetJustifyV("MIDDLE")
+	end
+
+	if anch:find("LEFT") then
+		fi:SetJustifyH("LEFT")
+	elseif anch:find("RIGHT") then
+		fi:SetJustifyH("RIGHT")
+	end
+end
+-- Health text #################################################################
 function addon:CreateHealthText(frame, f)
 	f.health.p = f:CreateFontString(f.overlay, {
 		font = self.font,
@@ -152,32 +169,17 @@ function addon:UpdateHealthText(f, trivial)
 		if not self.db.profile.hp.text.mouseover then
 			f.health.p:Show()
 		end
+		
+		local anch1 = self.db.profile.text.healthanchorpoint or "TOPRIGHT"
+		local anch2 = self.db.profile.text.healthrelativeanchorpoint or "BOTTOMRIGHT"
 
-		local anch2, anch1 = self.db.profile.text.healthanchorpoint or "BOTTOMRIGHT", ""
-
-		if anch2:find("BOTTOM") then
-			anch1 = "TOP"
-			f.health.p:SetJustifyV("BOTTOM")
-		elseif anch2:find("TOP") then
-			anch1 = "BOTTOM"
-			f.health.p:SetJustifyV("TOP")
-		else
-			f.health.p:SetJustifyV("MIDDLE")
-		end
-
-		if anch2:find("LEFT") then
-			anch1 = anch1 .. "LEFT"
-			f.health.p:SetJustifyH("LEFT")
-		elseif anch2:find("RIGHT") then
-			anch1 = anch1 .. "RIGHT"
-			f.health.p:SetJustifyH("RIGHT")
-		end
+		SetJustify(f.health.p, anch1, anch2)
 
 		f.health.p:ClearAllPoints()
 		f.health.p:SetPoint(anch1, f.health, anch2, self.db.profile.text.healthoffsetx or 0, self.db.profile.text.healthoffsety or 0)
 	end
 end
------------------------------------------------------------------- Level text --
+-- Level text ##################################################################
 function addon:CreateLevel(frame, f)
 	if not f.level then
 		return
@@ -206,31 +208,16 @@ function addon:UpdateLevel(f, trivial)
 	if trivial then
 		f.level:Hide()
 	else
-		local anch2, anch1 = self.db.profile.text.levelanchorpoint or "BOTTOMLEFT", ""
+		local anch1 = self.db.profile.text.levelanchorpoint or "TOPLEFT"
+		local anch2 = self.db.profile.text.levelrelativeanchorpoint or "BOTTOMLEFT"
 
-		if anch2:find("BOTTOM") then
-			f.level:SetJustifyV("BOTTOM")
-			anch1 = "TOP"
-		elseif anch2:find("TOP") then
-			f.level:SetJustifyV("TOP")
-			anch1 = "BOTTOM"
-		else
-			f.level:SetJustifyV("MIDDLE")
-		end
-
-		if anch2:find("LEFT") then
-			anch1 = anch1 .. "LEFT"
-			f.level:SetJustifyH("LEFT")
-		elseif anch2:find("RIGHT") then
-			anch1 = anch1 .. "RIGHT"
-			f.level:SetJustifyH("RIGHT")
-		end
+		SetJustify(f.level, anch1, anch2)
 
 		f.level:ClearAllPoints()
 		f.level:SetPoint(anch1, f.health, anch2, self.db.profile.text.leveloffsetx or 2.5, self.db.profile.text.leveloffsety or 0)
 	end
 end
-------------------------------------------------------------------- Name text --
+-- Name text ###################################################################
 function addon:CreateName(frame, f)
 	f.name = f:CreateFontString(f.overlay, {
 		font = self.font,
@@ -245,24 +232,10 @@ function addon:UpdateName(f, trivial)
 	f.name:ClearAllPoints()
 	f.name:SetWidth(0)
 
-	local anch2, anch1 = self.db.profile.text.nameanchorpoint or "TOP", ""
-	if anch2 == "BOTTOM" then
-		anch1 = "TOP"
-		f.name:SetJustifyV("TOP")
-		f.name:SetJustifyH("CENTER")
-	elseif anch2 == "TOP" then
-		anch1 = "BOTTOM"
-		f.name:SetJustifyV("BOTTOM")
-		f.name:SetJustifyH("CENTER")
-	elseif anch2 == "LEFT" then
-		anch1 = "RIGHT"
-		f.name:SetJustifyV("MIDDLE")
-		f.name:SetJustifyH("RIGHT")
-	elseif anch2 == "RIGHT" then
-		anch1 = "LEFT"
-		f.name:SetJustifyV("MIDDLE")
-		f.name:SetJustifyH("LEFT")
-	end
+	local anch1 = self.db.profile.text.nameanchorpoint or "BOTTOM"
+	local anch2 = self.db.profile.text.namerelativeanchorpoint or "TOP"
+
+	SetJustify(f.name, anch1, anch2)
 
 	f.name:SetPoint(anch1, f.health, anch2, self.db.profile.text.nameoffsetx or 2.5, self.db.profile.text.nameoffsety or 0)
 	if trivial then

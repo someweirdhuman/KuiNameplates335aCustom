@@ -17,31 +17,16 @@ local LDS = LibStub("LibDualSpec-1.0", true)
 local RELOAD_HINT = L["\n|cffff0000UI reload required to take effect."]
 --------------------------------------------------------------- Options table --
 do
-	local StrataSelectList = {
-		["BACKGROUND"] = "1. BACKGROUND",
-		["LOW"] = "2. LOW",
-		["MEDIUM"] = "3. MEDIUM",
-		["HIGH"] = "4. HIGH",
-		["DIALOG"] = "5. DIALOG",
-		["TOOLTIP"] = "6. TOOLTIP"
-	}
-
 	local AnchorSelectList = {
 		TOP = L["Top"],
 		BOTTOM = L["Bottom"],
 		LEFT = L["Left"],
+		CENTER = L["Center"],
 		RIGHT = L["Right"],
 		TOPLEFT = L["Top Left"],
 		TOPRIGHT = L["Top Right"],
 		BOTTOMLEFT = L["Bottom Left"],
 		BOTTOMRIGHT = L["Bottom Right"]
-	}
-
-	local SimpleAnchorSelectList = {
-		TOP = L["Top"],
-		BOTTOM = L["Bottom"],
-		LEFT = L["Left"],
-		RIGHT = L["Right"]
 	}
 
 	local HealthTextSelectList = {
@@ -581,8 +566,15 @@ do
 							nameanchorpoint = {
 								type = "select",
 								name = L["Anchor Point"],
-								values = SimpleAnchorSelectList,
+								values = AnchorSelectList,
 								order = 1,
+								width = "double"
+							},
+							namerelativeanchorpoint = {
+								type = "select",
+								name = L["Relative Anchor Point"],
+								values = AnchorSelectList,
+								order = 10,
 								width = "double"
 							},
 							nameoffsetx = {
@@ -616,13 +608,20 @@ do
 								order = 1,
 								width = "double"
 							},
+							levelrelativeanchorpoint = {
+								type = "select",
+								name = L["Relative Anchor Point"],
+								values = AnchorSelectList,
+								order = 10,
+								width = "double"
+							},
 							leveloffsetx = {
 								type = "range",
 								name = L["X Offset"],
 								bigStep = 0.5,
 								softMin = -20,
 								softMax = 20,
-								order = 1
+								order = 20
 							},
 							leveloffsety = {
 								type = "range",
@@ -630,7 +629,7 @@ do
 								bigStep = 0.5,
 								softMin = -20,
 								softMax = 20,
-								order = 2
+								order = 30
 							}
 						}
 					},
@@ -647,13 +646,20 @@ do
 								order = 1,
 								width = "double"
 							},
+							healthrelativeanchorpoint = {
+								type = "select",
+								name = L["Relative Anchor Point"],
+								values = AnchorSelectList,
+								order = 10,
+								width = "double"
+							},
 							healthoffsetx = {
 								type = "range",
 								name = L["X Offset"],
 								bigStep = 0.5,
 								softMin = -20,
 								softMax = 20,
-								order = 1
+								order = 20
 							},
 							healthoffsety = {
 								type = "range",
@@ -661,7 +667,7 @@ do
 								bigStep = 0.5,
 								softMin = -20,
 								softMax = 20,
-								order = 2
+								order = 30
 							}
 						}
 					}
@@ -1094,6 +1100,15 @@ do
 			addon:UpdateName(f, f.trivial)
 		end
 	)
+	addon:AddConfigChanged(
+		{"text", "nametext", "namerelativeanchorpoint"},
+		function(val)
+			addon.db.profile.text.namerelativeanchorpoint = val
+		end,
+		function(f)
+			addon:UpdateName(f, f.trivial)
+		end
+	)
 
 	addon:AddConfigChanged(
 		{"text", "nametext", "nameoffsetx"},
@@ -1125,6 +1140,15 @@ do
 			addon:UpdateLevel(f, f.trivial)
 		end
 	)
+	addon:AddConfigChanged(
+		{"text", "leveltext", "levelrelativeanchorpoint"},
+		function(val)
+			addon.db.profile.text.levelrelativeanchorpoint = val
+		end,
+		function(f)
+			addon:UpdateLevel(f, f.trivial)
+		end
+	)
 
 	addon:AddConfigChanged(
 		{"text", "leveltext", "leveloffsetx"},
@@ -1151,6 +1175,15 @@ do
 		{"text", "healthtext", "healthanchorpoint"},
 		function(val)
 			addon.db.profile.text.healthanchorpoint = val
+		end,
+		function(f)
+			addon:UpdateHealthText(f, f.trivial)
+		end
+	)
+	addon:AddConfigChanged(
+		{"text", "healthtext", "healthrelativeanchorpoint"},
+		function(val)
+			addon.db.profile.text.healthrelativeanchorpoint = val
 		end,
 		function(f)
 			addon:UpdateHealthText(f, f.trivial)
@@ -1206,7 +1239,17 @@ do
 	)
 
 	addon:AddConfigChanged(
-		{"general", "targetglowcolour"},
+		{"general", "shadowcolor"},
+		nil,
+		function(f, v)
+			if f.bg then
+				f.bg:SetVertexColor(unpack(v))
+			end
+		end
+	)
+
+	addon:AddConfigChanged(
+		{"general", "targetglowcolor"},
 		nil,
 		function(f, v)
 			if f.targetGlow then

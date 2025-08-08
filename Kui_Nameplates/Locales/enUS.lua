@@ -81,6 +81,7 @@ L["Show levels"] = true
 L["Show levels on nameplates."] = true
 L["Health display"] = true
 L["Anchor Point"] = true
+L["Relative Anchor Point"] = true
 L["X Offset"] = true
 L["Y Offset"] = true
 L["Reaction colours"] = true
