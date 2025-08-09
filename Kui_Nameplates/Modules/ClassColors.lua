@@ -4,24 +4,24 @@
 -- All rights reserved
 -- Backported by: Kader at https://github.com/bkader
 --
--- Provides class colours for friendly targets
+-- Provides class colors for friendly targets
 ]]
 local addon = LibStub("AceAddon-3.0"):GetAddon("KuiNameplates")
-local mod = addon:NewModule("ClassColours", addon.Prototype, "AceEvent-3.0")
+local mod = addon:NewModule("ClassColors", addon.Prototype, "AceEvent-3.0")
 local L = LibStub("AceLocale-3.0"):GetLocale("KuiNameplates")
 
 local select, GetPlayerInfoByGUID, tinsert = select, GetPlayerInfoByGUID, tinsert
 
 local cc_table
 
-mod.uiName = L["Class colours"]
+mod.uiName = L["Class colors"]
 
 local function SetCVars()
 	SetCVar("ShowClassColorInNameplate", mod.db.profile.enemy and 1 or 0)
 end
 -- functions ###################################################################
-function mod:SetClassColour(frame, cc)
-	frame.name.class_coloured = true
+function mod:SetClassColor(frame, cc)
+	frame.name.class_colored = true
 	frame.name:SetTextColor(cc.r, cc.g, cc.b)
 end
 -- message handlers ############################################################
@@ -34,7 +34,7 @@ function mod:GUIDAssumed(msg, f)
 		return
 	end
 
-	self:SetClassColour(f, cc_table[class])
+	self:SetClassColor(f, cc_table[class])
 end
 function mod:PostShow(msg, f)
 	if not (f.friend and f.player) then
@@ -45,7 +45,7 @@ function mod:PostShow(msg, f)
 	f.name:SetTextColor(.7, .7, .7)
 end
 function mod:PostHide(msg, f)
-	f.name.class_coloured = nil
+	f.name.class_colored = nil
 	f.name:SetTextColor(1, 1, 1, 1)
 end
 -- config changed hooks ########################################################
@@ -72,15 +72,15 @@ function mod:GetOptions()
 	return {
 		friendly = {
 			type = "toggle",
-			name = L["Class colour friendly player names"],
-			desc = L["Class colour the names of friendly players and dim the names of friendly players with no class information. Note that friendly players will only become class coloured once you mouse over their frames, at which point their class will be cached."],
+			name = L["Class color friendly player names"],
+			desc = L["Class color the names of friendly players and dim the names of friendly players with no class information. Note that friendly players will only become class colored once you mouse over their frames, at which point their class will be cached."],
 			width = "double",
 			order = 10
 		},
 		enemy = {
 			type = "toggle",
-			name = L["Class colour hostile players' health bars"],
-			desc = L["Class colour the health bars of hostile players, where they are attackable. This is a default interface option."],
+			name = L["Class color hostile players' health bars"],
+			desc = L["Class color the health bars of hostile players, where they are attackable. This is a default interface option."],
 			width = "double",
 			order = 20
 		}

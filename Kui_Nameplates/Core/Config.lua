@@ -17,31 +17,16 @@ local LDS = LibStub("LibDualSpec-1.0", true)
 local RELOAD_HINT = L["\n|cffff0000UI reload required to take effect."]
 --------------------------------------------------------------- Options table --
 do
-	local StrataSelectList = {
-		["BACKGROUND"] = "1. BACKGROUND",
-		["LOW"] = "2. LOW",
-		["MEDIUM"] = "3. MEDIUM",
-		["HIGH"] = "4. HIGH",
-		["DIALOG"] = "5. DIALOG",
-		["TOOLTIP"] = "6. TOOLTIP"
-	}
-
 	local AnchorSelectList = {
 		TOP = L["Top"],
 		BOTTOM = L["Bottom"],
 		LEFT = L["Left"],
+		CENTER = L["Center"],
 		RIGHT = L["Right"],
 		TOPLEFT = L["Top Left"],
 		TOPRIGHT = L["Top Right"],
 		BOTTOMLEFT = L["Bottom Left"],
 		BOTTOMRIGHT = L["Bottom Right"]
-	}
-
-	local SimpleAnchorSelectList = {
-		TOP = L["Top"],
-		BOTTOM = L["Bottom"],
-		LEFT = L["Left"],
-		RIGHT = L["Right"]
 	}
 
 	local HealthTextSelectList = {
@@ -351,49 +336,36 @@ do
 						},
 						order = 1
 					},
+					raidicon_side = {
+						type = "select",
+						name = L["Raid icon position"],
+						desc = L["Which side of the nameplate the raid icon should be displayed on"],
+						values = {L["Left"], L["Top"], L["Right"], L["Bottom"]},
+						order = 5
+					},
+					raidicon_size = {
+						type = "range",
+						name = L["Raid icon size"],
+						desc = L["Size of the raid marker texture on nameplates (skull, cross, etc)"],
+						order = 6,
+						bigStep = 1,
+						min = 1,
+						softMin = 10,
+						softMax = 100
+					},
 					bartexture = {
 						type = "select",
 						name = L["Status bar texture"],
 						desc = L["The texture used for both the health and cast bars."],
 						dialogControl = "LSM30_Statusbar",
 						values = AceGUIWidgetLSMlists.statusbar,
-						order = 5
-					},
-					strata = {
-						type = "select",
-						name = L["Frame strata"],
-						desc = L['The frame strata used by all frames, which determines what "layer" of the UI the frame is on. Untargeted frames are displayed at frame level 0 of this strata. Targeted frames are bumped to frame level 3.\n\nThis does not and can not affect the click-box of the frames, only their visibility.'],
-						values = StrataSelectList,
-						order = 6
-					},
-					raidicon_size = {
-						type = "range",
-						name = L["Raid icon size"],
-						desc = L["Size of the raid marker texture on nameplates (skull, cross, etc)"],
-						order = 7,
-						bigStep = 1,
-						min = 1,
-						softMin = 10,
-						softMax = 100
-					},
-					raidicon_side = {
-						type = "select",
-						name = L["Raid icon position"],
-						desc = L["Which side of the nameplate the raid icon should be displayed on"],
-						values = {L["Left"], L["Top"], L["Right"], L["Bottom"]},
-						order = 8
+						order = 7
 					},
 					fixaa = {
 						type = "toggle",
 						name = L["Fix aliasing"],
 						desc = L["Attempt to make plates appear sharper.\nWorks best when WoW's UI Scale system option is disabled and at larger resolutions.\n\n|cff88ff88This has a positive effect on performance.|r"] .. RELOAD_HINT,
 						order = 10
-					},
-					compatibility = {
-						type = "toggle",
-						name = L["Stereo compatibility"],
-						desc = L["Fix compatibility with stereo video. This has a negative effect on performance when many nameplates are visible."] .. RELOAD_HINT,
-						order = 20
 					},
 					highlight = {
 						type = "toggle",
@@ -408,11 +380,20 @@ do
 						order = 50,
 						disabled = function() return not addon.db.profile.general.highlight end
 					},
-					glowshadow = {
+					shadow = {
 						type = "toggle",
-						name = L["Use glow as shadow"],
-						desc = L["The frame glow is used to indicate threat. It becomes black when a unit has no threat status. Disabling this option will make it transparent instead."],
-						order = 70
+						name = L["Shadow"],
+						desc = L["Adds a shadow effect around nameplates."],
+						order = 60
+					},
+					shadowcolor = {
+						type = "color",
+						name = L["Shadow color"],
+						order = 70,
+						hasAlpha = true,
+						disabled = function()
+							return not addon.db.profile.general.shadow
+						end
 					},
 					targetglow = {
 						type = "toggle",
@@ -420,9 +401,9 @@ do
 						desc = L["Make your target's nameplate glow"],
 						order = 80
 					},
-					targetglowcolour = {
+					targetglowcolor = {
 						type = "color",
-						name = L["Target glow colour"],
+						name = L["Target glow color"],
 						order = 90,
 						hasAlpha = true,
 						disabled = function()
@@ -432,7 +413,7 @@ do
 					targetarrows = {
 						type = "toggle",
 						name = L["Show target arrows"],
-						desc = L["Show arrows around your target's nameplate. They will inherit the colour of the target glow, set above."],
+						desc = L["Show arrows around your target's nameplate. They will inherit the color of the target glow, set above."],
 						order = 100,
 						width = "double"
 					},
@@ -441,7 +422,7 @@ do
 						name = L["Health bar height"],
 						desc = L["Note that these values do not affect the size or shape of the click-box, which cannot be changed."],
 						order = 110,
-						step = 1,
+						step = 0.1,
 						min = 1,
 						softMin = 3,
 						softMax = 30
@@ -451,7 +432,7 @@ do
 						name = L["Trivial health bar height"],
 						desc = L["Height of the health bar of trivial (small, low maximum health) units."],
 						order = 120,
-						step = 1,
+						step = 0.1,
 						min = 1,
 						softMin = 3,
 						softMax = 30
@@ -460,7 +441,7 @@ do
 						type = "range",
 						name = L["Frame width"],
 						order = 130,
-						step = 1,
+						step = 0.1,
 						min = 1,
 						softMin = 25,
 						softMax = 220
@@ -469,7 +450,7 @@ do
 						type = "range",
 						name = L["Trivial frame width"],
 						order = 140,
-						step = 1,
+						step = 0.1,
 						min = 1,
 						softMin = 25,
 						softMax = 220
@@ -581,8 +562,15 @@ do
 							nameanchorpoint = {
 								type = "select",
 								name = L["Anchor Point"],
-								values = SimpleAnchorSelectList,
+								values = AnchorSelectList,
 								order = 1,
+								width = "double"
+							},
+							namerelativeanchorpoint = {
+								type = "select",
+								name = L["Relative Anchor Point"],
+								values = AnchorSelectList,
+								order = 10,
 								width = "double"
 							},
 							nameoffsetx = {
@@ -616,13 +604,20 @@ do
 								order = 1,
 								width = "double"
 							},
+							levelrelativeanchorpoint = {
+								type = "select",
+								name = L["Relative Anchor Point"],
+								values = AnchorSelectList,
+								order = 10,
+								width = "double"
+							},
 							leveloffsetx = {
 								type = "range",
 								name = L["X Offset"],
 								bigStep = 0.5,
 								softMin = -20,
 								softMax = 20,
-								order = 1
+								order = 20
 							},
 							leveloffsety = {
 								type = "range",
@@ -630,7 +625,7 @@ do
 								bigStep = 0.5,
 								softMin = -20,
 								softMax = 20,
-								order = 2
+								order = 30
 							}
 						}
 					},
@@ -647,13 +642,20 @@ do
 								order = 1,
 								width = "double"
 							},
+							healthrelativeanchorpoint = {
+								type = "select",
+								name = L["Relative Anchor Point"],
+								values = AnchorSelectList,
+								order = 10,
+								width = "double"
+							},
 							healthoffsetx = {
 								type = "range",
 								name = L["X Offset"],
 								bigStep = 0.5,
 								softMin = -20,
 								softMax = 20,
-								order = 1
+								order = 20
 							},
 							healthoffsety = {
 								type = "range",
@@ -661,7 +663,7 @@ do
 								bigStep = 0.5,
 								softMin = -20,
 								softMax = 20,
-								order = 2
+								order = 30
 							}
 						}
 					}
@@ -672,9 +674,9 @@ do
 				type = "group",
 				order = 40,
 				args = {
-					reactioncolours = {
+					reactioncolors = {
 						type = "group",
-						name = L["Reaction colours"],
+						name = L["Reaction colors"],
 						inline = true,
 						order = 1,
 						args = {
@@ -802,11 +804,26 @@ do
 								softMax = 3,
 								order = 1
 							},
+							shadow = {
+								type = "toggle",
+								name = L["Shadow"],
+								desc = L["Display a shadow on all fonts"],
+								order = 10,
+							},
+							shadowcolor = {
+								type = "color",
+								name = L["Shadow color"],
+								order = 11,
+								hasAlpha = true,
+								disabled = function()
+									return not addon.db.profile.fonts.options.shadow
+								end
+							},
 							outline = {
 								type = "toggle",
 								name = L["Outline"],
 								desc = L["Display an outline on all fonts"],
-								order = 10
+								order = 12
 							},
 							monochrome = {
 								type = "toggle",
@@ -1048,6 +1065,27 @@ do
 	)
 
 	addon:AddConfigChanged(
+		{"fonts", "options", "shadow"},
+		nil,
+		function(f, v)
+			for _, fontObject in pairs(f.fontObjects) do
+				local color = v and addon.db.profile.fonts.options.shadowcolor or {0, 0, 0, 0}
+				fontObject:SetShadowColor(unpack(color))
+			end
+		end
+	)
+
+	addon:AddConfigChanged(
+		{"fonts", "options", "shadowcolor"},
+		nil,
+		function(f, v)
+			for _, fontObject in pairs(f.fontObjects) do
+				fontObject:SetShadowColor(unpack(v))
+			end
+		end
+	)
+
+	addon:AddConfigChanged(
 		{"fonts", "options", "outline"},
 		nil,
 		function(f, v)
@@ -1094,6 +1132,15 @@ do
 			addon:UpdateName(f, f.trivial)
 		end
 	)
+	addon:AddConfigChanged(
+		{"text", "nametext", "namerelativeanchorpoint"},
+		function(val)
+			addon.db.profile.text.namerelativeanchorpoint = val
+		end,
+		function(f)
+			addon:UpdateName(f, f.trivial)
+		end
+	)
 
 	addon:AddConfigChanged(
 		{"text", "nametext", "nameoffsetx"},
@@ -1125,6 +1172,15 @@ do
 			addon:UpdateLevel(f, f.trivial)
 		end
 	)
+	addon:AddConfigChanged(
+		{"text", "leveltext", "levelrelativeanchorpoint"},
+		function(val)
+			addon.db.profile.text.levelrelativeanchorpoint = val
+		end,
+		function(f)
+			addon:UpdateLevel(f, f.trivial)
+		end
+	)
 
 	addon:AddConfigChanged(
 		{"text", "leveltext", "leveloffsetx"},
@@ -1151,6 +1207,15 @@ do
 		{"text", "healthtext", "healthanchorpoint"},
 		function(val)
 			addon.db.profile.text.healthanchorpoint = val
+		end,
+		function(f)
+			addon:UpdateHealthText(f, f.trivial)
+		end
+	)
+	addon:AddConfigChanged(
+		{"text", "healthtext", "healthrelativeanchorpoint"},
+		function(val)
+			addon.db.profile.text.healthrelativeanchorpoint = val
 		end,
 		function(f)
 			addon:UpdateHealthText(f, f.trivial)
@@ -1204,9 +1269,30 @@ do
 			UpdateAllBars()
 		end
 	)
+	
+	addon:AddConfigChanged(
+		{"general", "shadow"},
+		nil,
+		function(f, v)
+			if f.bg then
+				local color = v and addon.db.profile.general.shadowcolor or {0, 0, 0, 0}
+				f.bg:SetVertexColor(unpack(color))
+			end
+		end
+	)
 
 	addon:AddConfigChanged(
-		{"general", "targetglowcolour"},
+		{"general", "shadowcolor"},
+		nil,
+		function(f, v)
+			if f.bg then
+				f.bg:SetVertexColor(unpack(v))
+			end
+		end
+	)
+
+	addon:AddConfigChanged(
+		{"general", "targetglowcolor"},
 		nil,
 		function(f, v)
 			if f.targetGlow then
@@ -1217,14 +1303,6 @@ do
 				f.targetArrows.left:SetVertexColor(unpack(v))
 				f.targetArrows.right:SetVertexColor(unpack(v))
 			end
-		end
-	)
-
-	addon:AddConfigChanged(
-		{"general", "strata"},
-		nil,
-		function(f, v)
-			f:SetFrameStrata(v)
 		end
 	)
 

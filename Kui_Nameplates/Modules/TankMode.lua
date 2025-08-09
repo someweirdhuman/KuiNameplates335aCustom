@@ -203,31 +203,31 @@ function mod:ThreatUpdate(frame)
 
 	if not frame.targetGlow or not frame.target then
 		if tankmode then
-			-- set glow to tank colour unless this is the current target
-			frame:SetGlowColour(unpack(profile_tankmode.glowcolour))
+			-- set glow to tank color unless this is the current target
+			frame:SetGlowColor(profile_tankmode.glowcolor)
 		else
-			-- not in tank mode; set glow to default ui's colour
-			frame:SetGlowColour(frame.glow.r, frame.glow.g, frame.glow.b)
+			-- not in tank mode; set glow to default ui's color
+			frame:SetGlowColor({frame.glow.r, frame.glow.g, frame.glow.b, profile_tankmode.glowcolor[4]})
 		end
 	end
 
 	if tankmode then
-		-- also change health bar colour in tank mode
+		-- also change health bar color in tank mode
 		if frame.holdingThreat then
-			frame:SetHealthColour(10, unpack(profile_tankmode.barcolour))
-			ShowThreatBrackets(frame, unpack(profile_tankmode.barcolour))
+			frame:SetHealthColor(10, unpack(profile_tankmode.barcolor))
+			ShowThreatBrackets(frame, unpack(profile_tankmode.barcolor))
 		else
 			-- losing/gaining threat
-			frame:SetHealthColour(10, unpack(profile_tankmode.midcolour))
-			ShowThreatBrackets(frame, unpack(profile_tankmode.midcolour))
+			frame:SetHealthColor(10, unpack(profile_tankmode.midcolor))
+			ShowThreatBrackets(frame, unpack(profile_tankmode.midcolor))
 		end
 	else
-		-- not in tank mode; use default glow colour for brackets, too
+		-- not in tank mode; use default glow color for brackets, too
 		ShowThreatBrackets(frame, frame.glow.r, frame.glow.g, frame.glow.b)
 	end
 end
 function mod:ThreatClear(frame)
-	frame:SetHealthColour(false)
+	frame:SetHealthColor(false)
 	ShowThreatBrackets(frame, false)
 end
 -------------------------------------------------------------------- messages --
@@ -263,30 +263,30 @@ function mod:GetOptions()
 				enabled = {
 					type = "select",
 					name = L["Enable tank mode"],
-					desc = L['Change the colour of a plate\'s health bar and border when you have threat on its unit.\n\nSelecting "Smart" (default) will automatically enable or disable tank mode based on your current specialisation\'s role.'],
+					desc = L['Change the color of a plate\'s health bar and border when you have threat on its unit.\n\nSelecting "Smart" (default) will automatically enable or disable tank mode based on your current specialisation\'s role.'],
 					values = {"Smart", "Disabled", "Enabled"},
 					order = 0,
 					width = "double",
 					disabled = false
 				},
-				barcolour = {
+				barcolor = {
 					type = "color",
-					name = L["Bar colour"],
-					desc = L["The bar colour to use when you have threat"],
+					name = L["Bar color"],
+					desc = L["The bar color to use when you have threat"],
 					order = 10,
 					width = "half"
 				},
-				midcolour = {
+				midcolor = {
 					type = "color",
-					name = L["Transitional colour"],
-					desc = L["The bar colour to use when you are losing or gaining threat."],
+					name = L["Transitional color"],
+					desc = L["The bar color to use when you are losing or gaining threat."],
 					order = 20,
 					width = "half"
 				},
-				glowcolour = {
+				glowcolor = {
 					type = "color",
-					name = L["Glow colour"],
-					desc = L["The glow (border) colour to use when you have threat"],
+					name = L["Glow color"],
+					desc = L["The glow (border) color to use when you have threat"],
 					hasAlpha = true,
 					order = 30,
 					width = "half"
@@ -305,7 +305,7 @@ function mod:GetOptions()
 				enable_brackets = {
 					type = "toggle",
 					name = L["Show threat brackets"],
-					desc = L["Show threat brackets when you have threat on a nameplate. Kind of like target arrows, but for threat. In tank mode they will inherit the bar colour set above. Otherwise they will use the default glow colour."],
+					desc = L["Show threat brackets when you have threat on a nameplate. Kind of like target arrows, but for threat. In tank mode they will inherit the bar color set above. Otherwise they will use the default glow color."],
 					order = 10,
 					disabled = false
 				},
@@ -331,9 +331,9 @@ function mod:OnInitialize()
 	self.db = addon.db:RegisterNamespace(self.moduleName, {profile = {
 		tankmode = {
 			enabled = 1,
-			barcolour = {.2, .9, .1},
-			midcolour = {1, .5, 0},
-			glowcolour = {1, 0, 0, 1}
+			barcolor = {.2, .9, .1},
+			midcolor = {1, .5, 0},
+			glowcolor = {1, 0, 0, 1}
 		},
 		brackets = {
 			enable_brackets = true,

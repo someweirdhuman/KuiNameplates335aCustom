@@ -15,7 +15,7 @@ local len = string.len
 local utf8sub = LibStub("Kui-1.0").utf8sub
 local orig_SetName
 
-local colour_friendly
+local color_friendly
 
 local PositionRaidIcon = {
 	function(f) return f.icon:SetPoint("RIGHT", f.name, "LEFT", -2, 2) end,
@@ -49,7 +49,7 @@ local function SwitchOn(f)
 
 	if not f.player and f.friend then
 		-- color NPC names
-		f.name:SetTextColor(unpack(colour_friendly))
+		f.name:SetTextColor(unpack(color_friendly))
 	end
 
 	if mod.db.profile.display.hidecastbars then
@@ -110,7 +110,7 @@ local function SwitchOff(f)
 	-- reset name text
 	f:SetName()
 end
--- SetName hook, to set name's colour based on health
+-- SetName hook, to set name's color based on health
 local function nameonly_SetName(f)
 	orig_SetName(f)
 
@@ -227,7 +227,7 @@ function mod:GetOptions()
 				ondamaged = {
 					type = "toggle",
 					name = L["Even when damaged"],
-					desc = L["Only show the name of damaged nameplates, too. Their name will be coloured as a percentage of health remaining."],
+					desc = L["Only show the name of damaged nameplates, too. Their name will be colored as a percentage of health remaining."],
 					order = 10
 				},
 				hidecastbars = {
@@ -269,9 +269,9 @@ function mod:GetOptions()
 				}
 			}
 		},
-		colours = {
+		colors = {
 			type = "group",
-			name = L["NPC name colours"],
+			name = L["NPC name colors"],
 			inline = true,
 			order = 30,
 			disabled = function()
@@ -288,7 +288,7 @@ function mod:GetOptions()
 	}
 end
 function mod:configChangedListener()
-	colour_friendly = self.db.profile.colours.friendly
+	color_friendly = self.db.profile.colors.friendly
 end
 function mod:OnInitialize()
 	self.db = addon.db:RegisterNamespace(self.moduleName, {profile = {
@@ -300,7 +300,7 @@ function mod:OnInitialize()
 			fontsizeplayer = 11,
 			fontsizetrivial = 9
 		},
-		colours = {
+		colors = {
 			friendly = {.6, 1, 0.6}
 		}
 	}})

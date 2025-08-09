@@ -80,10 +80,10 @@ local function OnCastbarUpdate(unit, isChannel)
 	end
 
 	if notInterruptible then
-		f.castbar.bar:SetStatusBarColor(unpack(mod.db.profile.display.shieldbarcolour))
+		f.castbar.bar:SetStatusBarColor(unpack(mod.db.profile.display.shieldbarcolor))
 		f.castbar.shield:Show()
 	else
-		f.castbar.bar:SetStatusBarColor(unpack(mod.db.profile.display.barcolour))
+		f.castbar.bar:SetStatusBarColor(unpack(mod.db.profile.display.barcolor))
 		f.castbar.shield:Hide()
 	end
 
@@ -282,7 +282,7 @@ mod:AddConfigChanged(
 	end
 )
 mod:AddConfigChanged(
-	{"display", "shieldbarcolour"},
+	{"display", "shieldbarcolor"},
 	nil,
 	function(f, v)
 		f.castbar.shield:SetVertexColor(unpack(v))
@@ -341,16 +341,16 @@ function mod:GetOptions()
 					name = L["Show spell icon"],
 					order = 10
 				},
-				barcolour = {
+				barcolor = {
 					type = "color",
-					name = L["Bar colour"],
-					desc = L["The colour of the cast bar during interruptible casts"],
+					name = L["Bar color"],
+					desc = L["The color of the cast bar during interruptible casts"],
 					order = 0
 				},
-				shieldbarcolour = {
+				shieldbarcolor = {
 					type = "color",
-					name = L["Uninterruptible colour"],
-					desc = L["The colour of the cast bar and shield during UNinterruptible casts."],
+					name = L["Uninterruptible color"],
+					desc = L["The color of the cast bar and shield during UNinterruptible casts."],
 					order = 5
 				},
 				cbheight = {
@@ -391,8 +391,8 @@ function mod:OnInitialize()
 					spellname = true,
 					spellicon = true,
 					cbheight = 5,
-					barcolour = {.43, 0.47, 0.55, 1},
-					shieldbarcolour = {.8, 0.1, 0.1, 1}
+					barcolor = {.43, 0.47, 0.55, 1},
+					shieldbarcolor = {.8, 0.1, 0.1, 1}
 				}
 			}
 		}

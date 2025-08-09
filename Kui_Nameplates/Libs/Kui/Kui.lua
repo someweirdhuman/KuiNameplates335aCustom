@@ -45,7 +45,7 @@ kui.print = function(...)
     end
     print(GetTime()..': '..msg:gsub(", $",""))
 end
-kui.GetClassColour = function(class, str)
+kui.GetClassColor = function(class, str)
     if not class then
         class = select(2, UnitClass('player'))
     elseif not RAID_CLASS_COLORS[class] then
@@ -68,9 +68,9 @@ end
 kui.UnitIsPet = function(unit)
     return (not UnitIsPlayer(unit) and UnitPlayerControlled(unit))
 end
-kui.GetUnitColour = function(unit, str)
-    -- class colour for players or pets
-    -- faction colour for NPCs
+kui.GetUnitColor = function(unit, str)
+    -- class color for players or pets
+    -- faction color for NPCs
     local ret, r, g, b
 
     if (UnitIsTapped(unit) and not UnitIsTappedByPlayer(unit))
@@ -80,7 +80,7 @@ kui.GetUnitColour = function(unit, str)
         ret = { r = .5, g = .5, b = .5 }
     else
         if UnitIsPlayer(unit) or kui.UnitIsPet(unit) then
-            return kui.GetClassColour(unit, str)
+            return kui.GetClassColor(unit, str)
         else
             r, g, b = UnitSelectionColor(unit)
             ret = { r = r, g = g, b = b }
@@ -137,18 +137,18 @@ kui.CreateFontString = function(parent, args)
 
     font    = args.font or 'Fonts\\FRIZQT__.TTF'
     size    = args.size or 12
+    shadow  = args.shadow or nil
     outline = args.outline or nil
     mono    = args.mono or args.monochrome or nil
     alpha   = args.alpha or 1
-    shadow  = args.shadow or false
 
     ob:SetFont(font, size, (outline and 'OUTLINE' or '')..(mono and ' MONOCHROME' or ''))
     ob:SetAlpha(alpha)
 
     if shadow then
-        ob:SetShadowColor(0, 0, 0, 1)
-        ob:SetShadowOffset(type(shadow) == 'table' and unpack(shadow) or 1, -1)
-    elseif not shadow and args.reset then
+        ob:SetShadowColor(unpack(shadow))
+        ob:SetShadowOffset(1, -1)
+    elseif args.reset then
         -- remove the shadow
         ob:SetShadowColor(0, 0, 0, 0)
     end
