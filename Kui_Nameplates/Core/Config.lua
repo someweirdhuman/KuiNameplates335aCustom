@@ -435,7 +435,7 @@ do
 						name = L["Health bar height"],
 						desc = L["Note that these values do not affect the size or shape of the click-box, which cannot be changed."],
 						order = 110,
-						step = 1,
+						step = 0.1,
 						min = 1,
 						softMin = 3,
 						softMax = 30
@@ -445,7 +445,7 @@ do
 						name = L["Trivial health bar height"],
 						desc = L["Height of the health bar of trivial (small, low maximum health) units."],
 						order = 120,
-						step = 1,
+						step = 0.1,
 						min = 1,
 						softMin = 3,
 						softMax = 30
@@ -454,7 +454,7 @@ do
 						type = "range",
 						name = L["Frame width"],
 						order = 130,
-						step = 1,
+						step = 0.1,
 						min = 1,
 						softMin = 25,
 						softMax = 220
@@ -463,7 +463,7 @@ do
 						type = "range",
 						name = L["Trivial frame width"],
 						order = 140,
-						step = 1,
+						step = 0.1,
 						min = 1,
 						softMin = 25,
 						softMax = 220
