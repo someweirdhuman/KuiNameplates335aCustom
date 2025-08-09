@@ -336,12 +336,11 @@ do
 						},
 						order = 1
 					},
-					bartexture = {
+					raidicon_side = {
 						type = "select",
-						name = L["Status bar texture"],
-						desc = L["The texture used for both the health and cast bars."],
-						dialogControl = "LSM30_Statusbar",
-						values = AceGUIWidgetLSMlists.statusbar,
+						name = L["Raid icon position"],
+						desc = L["Which side of the nameplate the raid icon should be displayed on"],
+						values = {L["Left"], L["Top"], L["Right"], L["Bottom"]},
 						order = 5
 					},
 					strata = {
@@ -361,11 +360,12 @@ do
 						softMin = 10,
 						softMax = 100
 					},
-					raidicon_side = {
+					bartexture = {
 						type = "select",
-						name = L["Raid icon position"],
-						desc = L["Which side of the nameplate the raid icon should be displayed on"],
-						values = {L["Left"], L["Top"], L["Right"], L["Bottom"]},
+						name = L["Status bar texture"],
+						desc = L["The texture used for both the health and cast bars."],
+						dialogControl = "LSM30_Statusbar",
+						values = AceGUIWidgetLSMlists.statusbar,
 						order = 8
 					},
 					fixaa = {
