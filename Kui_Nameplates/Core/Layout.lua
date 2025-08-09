@@ -107,23 +107,16 @@ local function SetHealthColor(self, sticky, r, g, b)
 	end
 end
 
-local function SetGlowColor(self, r, g, b, a)
-	if not r then
-		-- set default colour
-		r, g, b = 0, 0, 0
-
-		if profile.general.glowshadow then
-			a = 0.8
+local function SetGlowColor(self, color)
+	if not color then
+		if profile.general.shadow then
+			color = profile.general.shadowcolor
 		else
-			a = 0
+			color = {0, 0, 0, 0}
 		end
 	end
 
-	if not a then
-		a = 0.8
-	end
-
-	self.bg:SetVertexColor(r, g, b, a)
+	self.bg:SetVertexColor(unpack(color))
 end
 
 local function GetDesiredAlpha(frame)
@@ -486,7 +479,7 @@ local function UpdateFrameCritical(self)
 
 				if self.targetGlow then
 					self.targetGlow:Show()
-					self:SetGlowColor(unpack(profile.general.targetglowcolor))
+					self:SetGlowColor(profile.general.targetglowcolor)
 				end
 
 				if self.highlight and profile.general.highlight_target then

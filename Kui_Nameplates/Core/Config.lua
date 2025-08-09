@@ -393,11 +393,20 @@ do
 						order = 50,
 						disabled = function() return not addon.db.profile.general.highlight end
 					},
-					glowshadow = {
+					shadow = {
 						type = "toggle",
-						name = L["Use glow as shadow"],
-						desc = L["The frame glow is used to indicate threat. It becomes black when a unit has no threat status. Disabling this option will make it transparent instead."],
-						order = 70
+						name = L["Shadow"],
+						desc = L["Adds a shadow effect around nameplates."],
+						order = 60
+					},
+					shadowcolor = {
+						type = "color",
+						name = L["Shadow color"],
+						order = 70,
+						hasAlpha = true,
+						disabled = function()
+							return not addon.db.profile.general.shadow
+						end
 					},
 					targetglow = {
 						type = "toggle",

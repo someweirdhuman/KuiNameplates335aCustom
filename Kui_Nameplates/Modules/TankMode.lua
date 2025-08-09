@@ -204,10 +204,10 @@ function mod:ThreatUpdate(frame)
 	if not frame.targetGlow or not frame.target then
 		if tankmode then
 			-- set glow to tank color unless this is the current target
-			frame:SetGlowColor(unpack(profile_tankmode.glowcolor))
+			frame:SetGlowColor(profile_tankmode.glowcolor)
 		else
 			-- not in tank mode; set glow to default ui's color
-			frame:SetGlowColor(frame.glow.r, frame.glow.g, frame.glow.b)
+			frame:SetGlowColor({frame.glow.r, frame.glow.g, frame.glow.b})
 		end
 	end
 
