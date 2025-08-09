@@ -207,7 +207,7 @@ function mod:ThreatUpdate(frame)
 			frame:SetGlowColor(profile_tankmode.glowcolor)
 		else
 			-- not in tank mode; set glow to default ui's color
-			frame:SetGlowColor({frame.glow.r, frame.glow.g, frame.glow.b})
+			frame:SetGlowColor({frame.glow.r, frame.glow.g, frame.glow.b, profile_tankmode.glowcolor[4]})
 		end
 	end
 
