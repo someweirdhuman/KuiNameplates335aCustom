@@ -137,6 +137,8 @@ local defaults = {
 				font = (latin and DEFAULT_FONT or LSM:GetDefault(LSM.MediaType.FONT)),
 				fontscale = 1,
 				outline = true,
+				shadow = false,
+				shadowcolor = {0, 0, 0, 1},
 				monochrome = false,
 				onesize = false,
 				noalpha = false
@@ -414,6 +416,9 @@ local function CreateFontString(self, parent, obj)
 	obj = obj or {}
 	obj.mono = addon.db.profile.fonts.options.monochrome
 	obj.outline = addon.db.profile.fonts.options.outline
+	if (addon.db.profile.fonts.options.shadow) then
+		obj.shadow = addon.db.profile.fonts.options.shadowcolor
+	end
 	obj.size = (addon.db.profile.fonts.options.onesize and "name") or obj.size or "name"
 
 	if type(obj.size) == "string" then

@@ -817,11 +817,26 @@ do
 								softMax = 3,
 								order = 1
 							},
+							shadow = {
+								type = "toggle",
+								name = L["Shadow"],
+								desc = L["Display a shadow on all fonts"],
+								order = 10,
+							},
+							shadowcolor = {
+								type = "color",
+								name = L["Shadow Color"],
+								order = 11,
+								hasAlpha = true,
+								disabled = function()
+									return not addon.db.profile.fonts.options.shadow
+								end
+							},
 							outline = {
 								type = "toggle",
 								name = L["Outline"],
 								desc = L["Display an outline on all fonts"],
-								order = 10
+								order = 12
 							},
 							monochrome = {
 								type = "toggle",
@@ -1059,6 +1074,27 @@ do
 		function(v)
 			addon.font = LSM:Fetch(LSM.MediaType.FONT, v)
 			addon:UpdateAllFonts()
+		end
+	)
+
+	addon:AddConfigChanged(
+		{"fonts", "options", "shadow"},
+		nil,
+		function(f, v)
+			for _, fontObject in pairs(f.fontObjects) do
+				local color = v and profile.fonts.options.shadowcolor or {0, 0, 0, 0}
+				fontObject:SetShadowColor(unpack(color))
+			end
+		end
+	)
+
+	addon:AddConfigChanged(
+		{"fonts", "options", "shadowcolor"},
+		nil,
+		function(f, v)
+			for _, fontObject in pairs(f.fontObjects) do
+				fontObject:SetShadowColor(unpack(v))
+			end
 		end
 	)
 
