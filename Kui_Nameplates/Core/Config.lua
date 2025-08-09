@@ -1282,6 +1282,17 @@ do
 			UpdateAllBars()
 		end
 	)
+	
+	addon:AddConfigChanged(
+		{"general", "shadow"},
+		nil,
+		function(f, v)
+			if f.bg then
+				local color = v and profile.general.shadowcolor or {0, 0, 0, 0}
+				f.bg:SetVertexColor(unpack(color))
+			end
+		end
+	)
 
 	addon:AddConfigChanged(
 		{"general", "shadowcolor"},
