@@ -1069,7 +1069,7 @@ do
 		nil,
 		function(f, v)
 			for _, fontObject in pairs(f.fontObjects) do
-				local color = v and profile.fonts.options.shadowcolor or {0, 0, 0, 0}
+				local color = v and addon.db.profile.fonts.options.shadowcolor or {0, 0, 0, 0}
 				fontObject:SetShadowColor(unpack(color))
 			end
 		end
@@ -1275,7 +1275,7 @@ do
 		nil,
 		function(f, v)
 			if f.bg then
-				local color = v and profile.general.shadowcolor or {0, 0, 0, 0}
+				local color = v and addon.db.profile.general.shadowcolor or {0, 0, 0, 0}
 				f.bg:SetVertexColor(unpack(color))
 			end
 		end
