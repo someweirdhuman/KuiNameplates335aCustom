@@ -15,7 +15,7 @@ local ICON_SPACING = -1
 
 local anticipationWasActive
 
-local colours = {
+local colors = {
 	full = {1, 1, .1},
 	partial = {.79, .55, .18},
 	anti = {1, .3, .3},
@@ -29,11 +29,11 @@ local defaultSizes = {}
 local function ComboPointsUpdate(self)
 	if self.points and self.points > 0 then
 		if self.points == 5 then
-			self.colour = colours.full
-			self.glowColour = colours.glowFull
+			self.color = colors.full
+			self.glowColor = colors.glowFull
 		else
-			self.colour = colours.partial
-			self.glowColour = colours.glowPartial
+			self.color = colors.partial
+			self.glowColor = colors.glowPartial
 		end
 
 		for i = 1, 5 do
@@ -43,8 +43,8 @@ local function ComboPointsUpdate(self)
 				self[i]:SetAlpha(.3)
 			end
 
-			self[i]:SetVertexColor(unpack(self.colour))
-			self.glows[i]:SetVertexColor(unpack(self.glowColour))
+			self[i]:SetVertexColor(unpack(self.color))
+			self.glows[i]:SetVertexColor(unpack(self.glowColor))
 		end
 
 		self:Show()

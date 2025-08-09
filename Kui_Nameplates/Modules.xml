@@ -3,7 +3,7 @@
 <Script file="Modules\Arena.lua" />
 <Script file="Modules\Castbar.lua" />
 <Script file="Modules\CastWarnings.lua" />
-<Script file="Modules\ClassColours.lua" />
+<Script file="Modules\ClassColors.lua" />
 <Script file="Modules\ComboPoints.lua" />
 <Script file="Modules\TankMode.lua" />
 <Script file="Modules\TargetArrows.lua" />

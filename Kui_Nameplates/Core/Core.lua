@@ -70,13 +70,14 @@ local defaults = {
 			fixaa = true, -- attempt to make plates appear sharper
 			bartexture = DEFAULT_BAR,
 			targetglow = true,
-			targetglowcolour = {.3, 0.7, 1, 1},
+			targetglowcolor = {.3, 0.7, 1, 1},
 			targetarrows = false,
 			hheight = 13,
 			thheight = 9,
 			width = 130,
 			twidth = 72,
-			glowshadow = true,
+			shadow = true,
+			shadowcolor = {0, 0, 0, 0.5},
 			lowhealthval = 20,
 			raidicon_size = 30,
 			raidicon_side = 3
@@ -96,18 +97,21 @@ local defaults = {
 		},
 		text = {
 			level = false, -- display levels
-			nameanchorpoint = "TOP",
+			nameanchorpoint = "BOTTOM",
+			namerelativeanchorpoint = "TOP",
 			nameoffsetx = 0,
 			nameoffsety = 0,
-			levelanchorpoint = "BOTTOMLEFT",
+			levelanchorpoint = "TOPLEFT",
+			levelrelativeanchorpoint = "BOTTOMLEFT",
 			leveloffsetx = 0,
 			leveloffsety = 2.5,
-			healthanchorpoint = "BOTTOMRIGHT",
+			healthanchorpoint = "TOPRIGHT",
+			healthrelativeanchorpoint = "BOTTOMRIGHT",
 			healthoffsetx = 0,
 			healthoffsety = 2.5
 		},
 		hp = {
-			reactioncolours = {
+			reactioncolors = {
 				hatedcol = {.7, 0.2, 0.1},
 				neutralcol = {1, 0.8, 0},
 				friendlycol = {.2, 0.6, 0.1},
@@ -131,6 +135,8 @@ local defaults = {
 				font = (latin and DEFAULT_FONT or LSM:GetDefault(LSM.MediaType.FONT)),
 				fontscale = 1,
 				outline = true,
+				shadow = false,
+				shadowcolor = {0, 0, 0, 1},
 				monochrome = false,
 				onesize = false,
 				noalpha = false
@@ -408,6 +414,9 @@ local function CreateFontString(self, parent, obj)
 	obj = obj or {}
 	obj.mono = addon.db.profile.fonts.options.monochrome
 	obj.outline = addon.db.profile.fonts.options.outline
+	if (addon.db.profile.fonts.options.shadow) then
+		obj.shadow = addon.db.profile.fonts.options.shadowcolor
+	end
 	obj.size = (addon.db.profile.fonts.options.onesize and "name") or obj.size or "name"
 
 	if type(obj.size) == "string" then
@@ -615,7 +624,7 @@ function addon:OnEnable()
 
 			self:orig_SetValue(value)
 		end
-		local SetColour = function(self, ...)
+		local SetColor = function(self, ...)
 			self:orig_SetStatusBarColor(...)
 			self.KuiFader:SetVertexColor(...)
 		end
@@ -634,7 +643,7 @@ function addon:OnEnable()
 			bar.SetValue = SetValueCutaway
 
 			bar.orig_SetStatusBarColor = bar.SetStatusBarColor
-			bar.SetStatusBarColor = SetColour
+			bar.SetStatusBarColor = SetColor
 		end
 	end
 
