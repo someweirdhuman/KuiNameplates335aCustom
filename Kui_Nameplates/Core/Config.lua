@@ -343,18 +343,11 @@ do
 						values = {L["Left"], L["Top"], L["Right"], L["Bottom"]},
 						order = 5
 					},
-					strata = {
-						type = "select",
-						name = L["Frame strata"],
-						desc = L['The frame strata used by all frames, which determines what "layer" of the UI the frame is on. Untargeted frames are displayed at frame level 0 of this strata. Targeted frames are bumped to frame level 3.\n\nThis does not and can not affect the click-box of the frames, only their visibility.'],
-						values = StrataSelectList,
-						order = 6
-					},
 					raidicon_size = {
 						type = "range",
 						name = L["Raid icon size"],
 						desc = L["Size of the raid marker texture on nameplates (skull, cross, etc)"],
-						order = 7,
+						order = 6,
 						bigStep = 1,
 						min = 1,
 						softMin = 10,
@@ -366,19 +359,13 @@ do
 						desc = L["The texture used for both the health and cast bars."],
 						dialogControl = "LSM30_Statusbar",
 						values = AceGUIWidgetLSMlists.statusbar,
-						order = 8
+						order = 7
 					},
 					fixaa = {
 						type = "toggle",
 						name = L["Fix aliasing"],
 						desc = L["Attempt to make plates appear sharper.\nWorks best when WoW's UI Scale system option is disabled and at larger resolutions.\n\n|cff88ff88This has a positive effect on performance.|r"] .. RELOAD_HINT,
 						order = 10
-					},
-					compatibility = {
-						type = "toggle",
-						name = L["Stereo compatibility"],
-						desc = L["Fix compatibility with stereo video. This has a negative effect on performance when many nameplates are visible."] .. RELOAD_HINT,
-						order = 20
 					},
 					highlight = {
 						type = "toggle",
@@ -825,7 +812,7 @@ do
 							},
 							shadowcolor = {
 								type = "color",
-								name = L["Shadow Color"],
+								name = L["Shadow color"],
 								order = 11,
 								hasAlpha = true,
 								disabled = function()
@@ -1316,14 +1303,6 @@ do
 				f.targetArrows.left:SetVertexColor(unpack(v))
 				f.targetArrows.right:SetVertexColor(unpack(v))
 			end
-		end
-	)
-
-	addon:AddConfigChanged(
-		{"general", "strata"},
-		nil,
-		function(f, v)
-			f:SetFrameStrata(v)
 		end
 	)
 
