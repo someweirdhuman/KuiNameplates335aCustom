@@ -138,6 +138,7 @@ kui.CreateFontString = function(parent, args)
     font    = args.font or 'Fonts\\FRIZQT__.TTF'
     size    = args.size or 12
     shadow  = args.shadow or nil
+    shadowcolor  = args.shadowcolor or nil
     outline = args.outline or nil
     mono    = args.mono or args.monochrome or nil
     alpha   = args.alpha or 1
@@ -145,8 +146,8 @@ kui.CreateFontString = function(parent, args)
     ob:SetFont(font, size, (outline and 'OUTLINE' or '')..(mono and ' MONOCHROME' or ''))
     ob:SetAlpha(alpha)
 
-    if shadow then
-        ob:SetShadowColor(unpack(shadow))
+    if shadow and shadowcolor then
+        ob:SetShadowColor(unpack(shadowcolor))
         ob:SetShadowOffset(1, -1)
     elseif args.reset then
         -- remove the shadow

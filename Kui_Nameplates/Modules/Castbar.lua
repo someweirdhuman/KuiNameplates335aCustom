@@ -34,12 +34,23 @@ end
 ------------------------------------------------------------- Script handlers --
 local function OnCastbarUpdate(unit, isChannel)
 	if not mod.enabledState then
+		if f.castbar.curr then
+			f.castbar.curr:Hide()
+		end
+		if f.castbar then
+			f.castbar:Hide()
+		end
 		return
 	end
-
 	local f = C_NamePlate.GetNamePlateForUnit(unit).kui
-
+	
 	if mod:FrameIsIgnored(f) then
+		if f.castbar.curr then
+			f.castbar.curr:Hide()
+		end
+		if f.castbar then
+			f.castbar:Hide()
+		end
 		return
 	end
 
@@ -51,7 +62,12 @@ local function OnCastbarUpdate(unit, isChannel)
     end
 
 	if not name then
-		f.castbar:Hide();
+		if f.castbar.curr then
+			f.castbar.curr:Hide()
+		end
+		if f.castbar then
+			f.castbar:Hide()
+		end
 		return false
 	end
 
@@ -102,7 +118,6 @@ local function OnCastbarUpdate(unit, isChannel)
 			f.castbar.curr:Show()
 		end
 	end
-
 	f.castbar:Show()
 end
 local function OnEvent(self, event, unit, ...)

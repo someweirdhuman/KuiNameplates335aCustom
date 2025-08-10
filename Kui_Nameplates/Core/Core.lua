@@ -415,7 +415,7 @@ local function CreateFontString(self, parent, obj)
 	obj.mono = addon.db.profile.fonts.options.monochrome
 	obj.outline = addon.db.profile.fonts.options.outline
 	if (addon.db.profile.fonts.options.shadow) then
-		obj.shadow = addon.db.profile.fonts.options.shadowcolor
+		obj.shadowcolor = addon.db.profile.fonts.options.shadowcolor
 	end
 	obj.size = (addon.db.profile.fonts.options.onesize and "name") or obj.size or "name"
 
