@@ -290,6 +290,8 @@ local function OnFrameHide(self)
 	local f = self.kui
 	f:Hide()
 
+	f:SetFrameLevel(0)
+
 	if f.targetGlow then
 		f.targetGlow:Hide()
 	end
@@ -468,6 +470,9 @@ local function UpdateFrameCritical(self)
 				self.targetDelay = nil
 				addon:StoreGUID(self, "target")
 
+				-- move this frame above others
+				self:SetFrameLevel(3)
+
 				if profile_hp.text.mouseover and not self.trivial then
 					self.health.p:Show()
 				end
@@ -493,6 +498,8 @@ local function UpdateFrameCritical(self)
 		if self.target then
 			-- or it was, but no longer is.
 			self.target = nil
+
+			self:SetFrameLevel(0)
 
 			if self.targetGlow then
 				self.targetGlow:Hide()
@@ -539,7 +546,7 @@ function addon:IsNameplate(frame)
 end
 function addon:InitFrame(frame, unit)
 	-- container for kui objects!
-	frame.kui = CreateFrame("Frame", nil, frame)
+	frame.kui = CreateFrame("Frame", nil, profile.general.compatibility and frame or WorldFrame)
 	local f = frame.kui
 	f.unit = unit
 
@@ -613,6 +620,9 @@ function addon:InitFrame(frame, unit)
 
 	f:SetScale(addon.uiscale)
 
+	f:SetFrameStrata(profile.general.strata)
+	f:SetFrameLevel(0)
+
 	f:SetCentre()
 
 	self:CreateBackground(frame, f)
@@ -621,6 +631,7 @@ function addon:InitFrame(frame, unit)
 	-- overlay - frame level above health bar, used for text -------------------
 	f.overlay = CreateFrame("Frame", nil, f)
 	f.overlay:SetAllPoints(f.health)
+	f.overlay:SetFrameLevel(2)
 
 	self:CreateHighlight(frame, f)
 	self:CreateHealthText(frame, f)
