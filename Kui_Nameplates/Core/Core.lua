@@ -328,7 +328,7 @@ do
 			return false
 		end
 		if addon:IsNameplate(plate) and not plate.kui then
-			addon:InitFrame(plate)
+			addon:InitFrame(plate, unit)
 			tinsert(addon.frameList, plate)
 		end
 	end

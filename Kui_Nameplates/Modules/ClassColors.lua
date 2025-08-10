@@ -25,24 +25,17 @@ function mod:SetClassColor(frame, cc)
 	frame.name:SetTextColor(cc.r, cc.g, cc.b)
 end
 -- message handlers ############################################################
-function mod:GUIDAssumed(msg, f)
-	if not (f.friend and f.player and f.guid) then
+function mod:PostShow(msg, f)
+	if not (f.friend and f.player) then
 		return
 	end
-	local class = select(2, GetPlayerInfoByGUID(f.guid))
+
+	local class = select(2, UnitClass(f.unit))
 	if not class then
 		return
 	end
 
 	self:SetClassColor(f, cc_table[class])
-end
-function mod:PostShow(msg, f)
-	if not (f.friend and f.player) then
-		return
-	end
-	-- a friendly player; make their name slightly gray
-	-- will be overwritten when GUIDStored/Assumed fires
-	f.name:SetTextColor(.7, .7, .7)
 end
 function mod:PostHide(msg, f)
 	f.name.class_colored = nil
@@ -103,14 +96,10 @@ function mod:OnInitialize()
 	SetCVars()
 end
 function mod:OnEnable()
-	self:RegisterMessage("KuiNameplates_GUIDAssumed", "GUIDAssumed")
-	self:RegisterMessage("KuiNameplates_GUIDStored", "GUIDAssumed")
 	self:RegisterMessage("KuiNameplates_PostShow", "PostShow")
 	self:RegisterMessage("KuiNameplates_PostHide", "PostHide")
 end
 function mod:OnDisable()
-	self:UnregisterMessage("KuiNameplates_GUIDAssumed")
-	self:UnregisterMessage("KuiNameplates_GUIDStored")
 	self:UnregisterMessage("KuiNameplates_PostShow")
 	self:UnregisterMessage("KuiNameplates_PostHide")
 end

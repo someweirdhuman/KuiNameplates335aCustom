@@ -537,10 +537,11 @@ function addon:IsNameplate(frame)
 	local o = select(2, frame:GetRegions())
 	return (o and o:GetObjectType() == "Texture" and o:GetTexture() == [[Interface\Tooltips\Nameplate-Border]])
 end
-function addon:InitFrame(frame)
+function addon:InitFrame(frame, unit)
 	-- container for kui objects!
 	frame.kui = CreateFrame("Frame", nil, frame)
 	local f = frame.kui
+	f.unit = unit
 
 	f.fontObjects = {}
 
